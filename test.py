@@ -17,7 +17,7 @@ flask： web框架，通过flask提供的装饰器@server.route()将普通函数
 # 创建一个服务
 server = flask.Flask(__name__)
 # 数据库链接
-MySQLdb = MySQLdb('127.0.0.1', 'root', '123456789', 'longer')
+MySQLdb = MySQLdb('localhost', 'root', '123456789', 'longer')
 
 
 @server.route('/login', methods=['get', 'post'])

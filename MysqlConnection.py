@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import mysql.connector
+import pymysql
 from logger import logger
 
 """
@@ -22,10 +22,10 @@ class MySQLdb:
     # 数据库链接
     def set_connection(self):
         try:
-            self.connection = mysql.connector.connect(
+            self.connection = pymysql.connect(
                 host=self.host, user=self.user, password=self.password, database=self.database
             )
-            self.cursor = self.connection.cursor(dictionary=True)
+            self.cursor = self.connection.cursor()
         except Exception as e:
             logger.info("Error connecting message: {}".format(e))
 
