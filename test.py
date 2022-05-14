@@ -33,7 +33,7 @@ def login():
 
 def get_user(username, password):
     try:
-        res = MySQLdb.getOne("SELECT * FROM os_users WHERE username = %s", (username,))
+        res = MySQLdb.get_one("SELECT * FROM os_users WHERE username = %s", (username,))
         if res['password'] == md5((md5(password.encode('utf-8')).hexdigest() + res['salt']).encode('utf-8')).hexdigest():
             info = {'message': 'password check successfully', 'code': 200, 'item': res}
         else:

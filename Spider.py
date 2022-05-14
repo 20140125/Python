@@ -16,17 +16,17 @@ class Spider:
         self.url = url
 
     # 执行脚本
-    def runSpider(self):
+    def run_spider(self):
         driver = webdriver.Chrome()
         # 窗口最大化
         driver.maximize_window()
         # 打开窗口
         driver.get(self.url)
         # 获取图片
-        self.getImageList(driver)
+        self.get_image_list(driver)
 
     # 获取图片信息
-    def getImageList(self, driver):
+    def get_image_list(self, driver):
         try:
             # 执行js脚本
             for i in range(1, 9):
@@ -44,12 +44,12 @@ class Spider:
                 logger.info(direction)
             time.sleep(5)
             # 页码切换
-            self.changePage(driver)
+            self.change_page(driver)
         except Exception as e:
             logger.info('获取图片信息失败：{}'.format(e))
 
     # 页码转换
-    def changePage(self, driver):
+    def change_page(self, driver):
         # 获取节点
         try:
             pages = driver.find_elements(By.CSS_SELECTOR, '.pagination a')
@@ -57,11 +57,11 @@ class Spider:
                 if page.text == '下一页':
                     page.click()
                     time.sleep(2)
-                    self.getImageList(driver)
+                    self.get_image_list(driver)
         except Exception as e:
             logger.info('获取页码节点页失败：{}'.format(e))
 
 
 if __name__ == '__main__':
     Spider = Spider('https://fabiaoqing.com/biaoqing')
-    Spider.runSpider()
+    Spider.run_spider()

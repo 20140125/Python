@@ -11,79 +11,79 @@ from logger import logger
 class MySQLdb:
 
     # MySQL实例化
-    def __init__(self, host, user, passwd, database):
+    def __init__(self, host, user, password, database):
         self.cursor = None
         self.connection = None
         self.host = host
         self.user = user
-        self.passwd = passwd
+        self.password = password
         self.database = database
 
     # 数据库链接
-    def setConnection(self):
+    def set_connection(self):
         try:
             self.connection = mysql.connector.connect(
-                host=self.host, user=self.user, passwd=self.passwd, database=self.database
+                host=self.host, user=self.user, password=self.password, database=self.database
             )
             self.cursor = self.connection.cursor(dictionary=True)
         except Exception as e:
             logger.info("Error connecting message: {}".format(e))
 
     # 关闭数据库链接
-    def cloeConnection(self):
+    def cloe_connection(self):
         self.connection.close()
         self.cursor.close()
 
     # 获取一条结构集
-    def getOne(self, sql, value):
+    def get_one(self, sql, value):
         result = None
         try:
-            self.setConnection()
+            self.set_connection()
             self.cursor.execute(sql, value)
             logger.info(sql)
             result = self.cursor.fetchone()
-            self.cloeConnection()
+            self.cloe_connection()
         except Exception as e:
             logger.info('Error fetchone message: {}'.format(e))
         return result
 
     # 获取多条结果集
-    def getLists(self, sql):
+    def get_lists(self, sql):
         result = None
         try:
-            self.setConnection()
+            self.set_connection()
             self.cursor.execute(sql)
             logger.info(sql)
             result = self.cursor.fetchall()
-            self.cloeConnection()
+            self.cloe_connection()
         except Exception as e:
             logger.info('Error fetchall message: {}'.format(e))
         return result
 
     # 插入/修改一条记录
-    def insertOne(self, sql, value):
+    def insert_one(self, sql, value):
         result = False
         try:
-            self.setConnection()
+            self.set_connection()
             self.cursor.execute(sql, value)
             logger.info(sql)
             self.connection.commit()
             result = self.cursor.rowcount == 1
-            self.cloeConnection()
+            self.cloe_connection()
         except Exception as e:
             logger.info('Error insertOne message: {}'.format(e))
         return result
 
     # 插入/修改多条记录
-    def insertMore(self, sql, values):
+    def insert_more(self, sql, values):
         result = False
         try:
-            self.setConnection()
+            self.set_connection()
             self.cursor.execute(sql, values)
             logger.info(sql)
             self.connection.commit()
             result = self.cursor.rowcount == len(values)
-            self.cloeConnection()
+            self.cloe_connection()
         except Exception as e:
             logger.info('Error insertMore message: {}'.format(e))
         return result
