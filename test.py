@@ -20,6 +20,7 @@ server = flask.Flask(__name__)
 MySQLdb = MySQLdb('localhost', 'root', '123456789', 'longer')
 
 
+# 登录系统
 @server.route('/login', methods=['get', 'post'])
 def login():
     username = request.values.get('username')
@@ -31,10 +32,28 @@ def login():
     return json.dumps(res, ensure_ascii=True)
 
 
+# 获取日志信息
+@server.route('/logs', methods=['POST'])
+def get_logs():
+    try:
+        limit = int(request.form.get('limit', '10'))
+        page = int(request.form.get('page', '1'))
+        info = MySQLdb.get_lists("select * from os_system_log order by id desc limit %s, %s", (limit * (page - 1), limit))
+        for item in info:
+            item['log'] = json.loads(item['log'])
+        info = {'message': 'successfully', 'code': 200, 'item': info}
+    except Exception as e:
+        print(e)
+        info = {'message': e, 'code': 500}
+    return json.dumps(info, ensure_ascii=True)
+
+
+# 账号密码获取用户信息
 def get_user(username, password):
     try:
         res = MySQLdb.get_one("SELECT * FROM os_users WHERE username = %s", (username,))
-        if res['password'] == md5((md5(password.encode('utf-8')).hexdigest() + res['salt']).encode('utf-8')).hexdigest():
+        if res['password'] == md5(
+                (md5(password.encode('utf-8')).hexdigest() + res['salt']).encode('utf-8')).hexdigest():
             info = {'message': 'password check successfully', 'code': 200, 'item': res}
         else:
             info = {'message': 'password check failed', 'code': 201}

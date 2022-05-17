@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import pymysql
+from pymysql import cursors
 from logger import logger
 
 """
@@ -23,7 +24,11 @@ class MySQLdb:
     def set_connection(self):
         try:
             self.connection = pymysql.connect(
-                host=self.host, user=self.user, password=self.password, database=self.database
+                host=self.host,
+                user=self.user,
+                password=self.password,
+                database=self.database,
+                cursorclass=cursors.DictCursor
             )
             self.cursor = self.connection.cursor()
         except Exception as e:
@@ -48,11 +53,11 @@ class MySQLdb:
         return result
 
     # 获取多条结果集
-    def get_lists(self, sql):
+    def get_lists(self, sql, values):
         result = None
         try:
             self.set_connection()
-            self.cursor.execute(sql)
+            self.cursor.execute(sql, values)
             logger.info(sql)
             result = self.cursor.fetchall()
             self.cloe_connection()
