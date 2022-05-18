@@ -2,7 +2,8 @@
 
 import pymysql
 from pymysql import cursors
-from logger import logger
+
+from tools.logger import logger
 
 """
 数据库模块
@@ -92,3 +93,6 @@ class MySQLdb:
         except Exception as e:
             logger.info('Error insertMore message: {}'.format(e))
         return result
+
+
+MySQLdb = MySQLdb('localhost', 'root', '123456789', 'longer')
