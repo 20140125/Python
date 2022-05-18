@@ -1,9 +1,0 @@
-定位方式	             By
-id	                By.ID
-name	            By.NAME
-class_name	        By.CLASS_NAME
-tag_name	        By.TAG_NAME
-link_text	        By.LINK_TEXT
-partial_link_text	By.PARTIAL_LINK_TEXT
-css_selector	    By.CSS_SELECTOR
-xpath	            By.XPATH
