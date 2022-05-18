@@ -3,6 +3,7 @@
 import pymysql
 from pymysql import cursors
 
+from db.config import Settings
 from tools.logger import logger
 
 """
@@ -95,4 +96,8 @@ class MySQLdb:
         return result
 
 
-MySQLdb = MySQLdb('localhost', 'root', '123456789', 'longer')
+# 获取配置信息
+settings = Settings()
+
+# 数据库实例化
+MySQLdb = MySQLdb(settings.db_host, settings.db_username, settings.db_password, settings.db_database)

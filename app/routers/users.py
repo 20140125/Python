@@ -2,7 +2,8 @@
 from typing import Union
 
 from fastapi import APIRouter
-from models.users import login, logout
+
+from models.users import (login, logout)
 
 router = APIRouter()
 
