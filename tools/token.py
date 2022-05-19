@@ -1,14 +1,12 @@
 from datetime import datetime, timedelta
 
-from fastapi import FastAPI
 import jwt
+from fastapi import FastAPI
 
-# to get a string like this run:
-# openssl rand -hex 32
-SECRET_KEY = '09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7'
-ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+from config.app import Settings
 
+# 获取配置信息
+config = Settings()
 
 # app
 app = FastAPI()
@@ -18,12 +16,10 @@ app = FastAPI()
 def create_access_token(data: dict):
     to_encode = data.copy()
     # token失效时限
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.utcnow() + timedelta(minutes=config.access_token_expire_minutes)
     # 更新到我们之前传进来的字典
     to_encode.update({'exp': expire})
     # jwt 编码 生成我们需要的token
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, config.secret_key, algorithm=config.token_algorithm)
     # 返回token信息
     return encoded_jwt
-
-

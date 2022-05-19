@@ -100,4 +100,9 @@ class MySQLdb:
 config = Settings()
 
 # 数据库实例化
-MySQLdb = MySQLdb(host=config.db_host, user=config.db_username, password=config.db_password, database=config.db_database)
+MySQLdb = MySQLdb(
+    host=config.db_host,
+    user=config.db_username,
+    password=config.db_password,
+    database=config.db_database
+)
