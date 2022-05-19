@@ -3,7 +3,7 @@
 import pymysql
 from pymysql import cursors
 
-from db.config import Settings
+from config.app import Settings
 from tools.logger import logger
 
 """
@@ -14,7 +14,7 @@ from tools.logger import logger
 class MySQLdb:
 
     # MySQL实例化
-    def __init__(self, host, user, password, database):
+    def __init__(self, *, host, user, password, database):
         self.cursor = None
         self.connection = None
         self.host = host
@@ -97,7 +97,7 @@ class MySQLdb:
 
 
 # 获取配置信息
-settings = Settings()
+config = Settings()
 
 # 数据库实例化
-MySQLdb = MySQLdb(settings.db_host, settings.db_username, settings.db_password, settings.db_database)
+MySQLdb = MySQLdb(host=config.db_host, user=config.db_username, password=config.db_password, database=config.db_database)
