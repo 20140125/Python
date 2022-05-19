@@ -34,7 +34,7 @@ class MySQLdb:
             )
             self.cursor = self.connection.cursor()
         except Exception as e:
-            logger.info("Error connecting message: {}".format(e))
+            logger.error('Error connecting message: {}'.format(e))
 
     # 关闭数据库链接
     def cloe_connection(self):
@@ -47,11 +47,11 @@ class MySQLdb:
         try:
             self.set_connection()
             self.cursor.execute(sql, value)
-            logger.info(sql)
+            logger.debug(sql)
             result = self.cursor.fetchone()
             self.cloe_connection()
         except Exception as e:
-            logger.info('Error fetchone message: {}'.format(e))
+            logger.error('Error fetchone message: {}'.format(e))
         return result
 
     # 获取多条结果集
@@ -60,11 +60,11 @@ class MySQLdb:
         try:
             self.set_connection()
             self.cursor.execute(sql, values)
-            logger.info(sql)
+            logger.debug(sql)
             result = self.cursor.fetchall()
             self.cloe_connection()
         except Exception as e:
-            logger.info('Error fetchall message: {}'.format(e))
+            logger.error('Error fetchall message: {}'.format(e))
         return result
 
     # 插入/修改一条记录
@@ -73,12 +73,12 @@ class MySQLdb:
         try:
             self.set_connection()
             self.cursor.execute(sql, value)
-            logger.info(sql)
+            logger.debug(sql)
             self.connection.commit()
             result = self.cursor.rowcount == 1
             self.cloe_connection()
         except Exception as e:
-            logger.info('Error insertOne message: {}'.format(e))
+            logger.error('Error insertOne message: {}'.format(e))
         return result
 
     # 插入/修改多条记录
@@ -87,12 +87,12 @@ class MySQLdb:
         try:
             self.set_connection()
             self.cursor.execute(sql, values)
-            logger.info(sql)
+            logger.debug(sql)
             self.connection.commit()
             result = self.cursor.rowcount == len(values)
             self.cloe_connection()
         except Exception as e:
-            logger.info('Error insertMore message: {}'.format(e))
+            logger.error('Error insertMore message: {}'.format(e))
         return result
 
 

@@ -9,7 +9,7 @@ from tools.token import create_access_token
 
 
 # 生成验证码
-async def set_verify_code():
+async def verify_code():
     return {'message': 'successfully', 'code': 200, 'items': {'verify_code': random.randint(100000, 999999)}}
 
 
