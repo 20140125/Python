@@ -5,12 +5,17 @@ from datetime import datetime
 from hashlib import md5
 
 from db.connection import MySQLdb
+from tools.redis import redisClient
 from tools.token import create_access_token
 
 
 # 生成验证码
 async def verify_code():
-    return {'message': 'successfully', 'code': 200, 'items': {'verify_code': random.randint(100000, 999999)}}
+    # 生成随机数
+    num = random.randint(100000, 999999)
+    # 保存到REDIS
+    await redisClient.set_ex(num, 60, num)
+    return {'message': 'successfully', 'code': 200, 'items': {'verify_code': num}}
 
 
 # 用户登录系统

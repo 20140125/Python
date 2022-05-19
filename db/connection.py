@@ -6,9 +6,9 @@ from pymysql import cursors
 from config.app import Settings
 from tools.logger import logger
 
-"""
+'''
 数据库模块
-"""
+'''
 
 
 class MySQLdb:
@@ -22,7 +22,10 @@ class MySQLdb:
         self.password = password
         self.database = database
 
-    # 数据库链接
+    '''
+    数据库链接
+    '''
+
     def set_connection(self):
         try:
             self.connection = pymysql.connect(
@@ -36,12 +39,18 @@ class MySQLdb:
         except Exception as e:
             logger.error('Error connecting message: {}'.format(e))
 
-    # 关闭数据库链接
+    '''
+    关闭数据库链接
+    '''
+
     def cloe_connection(self):
         self.connection.close()
         self.cursor.close()
 
-    # 获取一条结构集
+    '''
+    获取一条结构集
+    '''
+
     def get_one(self, sql, value):
         result = None
         try:
@@ -54,7 +63,10 @@ class MySQLdb:
             logger.error('Error fetchone message: {}'.format(e))
         return result
 
-    # 获取多条结果集
+    '''
+    获取多条结果集
+    '''
+
     def get_lists(self, sql, values):
         result = None
         try:
@@ -67,7 +79,10 @@ class MySQLdb:
             logger.error('Error fetchall message: {}'.format(e))
         return result
 
-    # 插入/修改一条记录
+    '''
+    插入/修改一条记录
+    '''
+
     def insert_one(self, sql, value):
         result = False
         try:
@@ -81,7 +96,10 @@ class MySQLdb:
             logger.error('Error insertOne message: {}'.format(e))
         return result
 
-    # 插入/修改多条记录
+    '''
+    插入/修改多条记录
+    '''
+
     def insert_more(self, sql, values):
         result = False
         try:

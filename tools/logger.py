@@ -4,11 +4,11 @@ import logging
 import logging.handlers
 import time
 
-LOG_FILENAME = "{}.log".format(time.strftime("%Y%m%d", time.localtime()))
+LOG_FILENAME = "./logs/{}.log".format(time.strftime("%Y%m%d", time.localtime()))
 logger = logging.getLogger()
-"""
+'''
 日志模块
-"""
+'''
 
 
 def set_logger():
