@@ -83,7 +83,7 @@ class MySQLdb:
     插入/修改一条记录
     '''
 
-    def insert_one(self, sql, value):
+    def update_one(self, sql, value):
         result = False
         try:
             self.set_connection()
@@ -93,14 +93,14 @@ class MySQLdb:
             result = self.cursor.rowcount == 1
             self.cloe_connection()
         except Exception as e:
-            logger.error('Error insertOne message: {}'.format(e))
+            logger.error('Error update_one message: {}'.format(e))
         return result
 
     '''
     插入/修改多条记录
     '''
 
-    def insert_more(self, sql, values):
+    def update_more(self, sql, values):
         result = False
         try:
             self.set_connection()
@@ -110,7 +110,7 @@ class MySQLdb:
             result = self.cursor.rowcount == len(values)
             self.cloe_connection()
         except Exception as e:
-            logger.error('Error insertMore message: {}'.format(e))
+            logger.error('Error update_more message: {}'.format(e))
         return result
 
 
