@@ -19,9 +19,9 @@ async def lists(pagination, request):
             for data in item:
                 data['log'] = json.loads(data['log'])
         info = {'message': 'successfully', 'code': Code.SUCCESS, 'lists': item}
-        return await jsonResponse(info, request)
     except Exception as e:
-        return {'message': 'network error {}'.format(e), 'code': Code.NETWORK}
+        info = {'message': 'network error {}'.format(e), 'code': Code.NETWORK, 'lists': []}
+    return await jsonResponse(info, request)
 
 
 # 删除日志
@@ -34,6 +34,6 @@ async def remove(params, request):
             info = {'message': 'remove system log failed', 'code': Code.ERROR, 'lists': params}
         return await jsonResponse(info, request)
     except Exception as e:
-        info = {'message': 'network error {}'.format(e), 'code': Code.NETWORK}
+        info = {'message': 'network error {}'.format(e), 'code': Code.NETWORK, 'lists': []}
     return info
 

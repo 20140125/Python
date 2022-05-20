@@ -13,7 +13,7 @@ app = FastAPI()
 
 
 # 生成token
-def create_access_token(data: dict):
+async def create_access_token(data: dict):
     to_encode = data.copy()
     # token失效时限
     expire = datetime.utcnow() + timedelta(minutes=config.access_token_expire_minutes)

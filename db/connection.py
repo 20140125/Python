@@ -83,7 +83,7 @@ class MySQLdb:
     插入/修改一条记录
     '''
 
-    def update_one(self, sql, value):
+    async def update_one(self, sql, value):
         result = False
         try:
             self.set_connection()
@@ -100,7 +100,7 @@ class MySQLdb:
     插入/修改多条记录
     '''
 
-    def update_more(self, sql, values):
+    async def update_more(self, sql, values):
         result = False
         try:
             self.set_connection()
