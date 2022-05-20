@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import random
+from typing import Union
 
 from pydantic import BaseModel, EmailStr
 
@@ -7,16 +8,16 @@ from pydantic import BaseModel, EmailStr
 # 登录系统
 class loginModel(BaseModel):
     email: EmailStr
-    password: str
-    verify_code: str = random.randint(100000, 999999)
+    password: Union[str, None]
+    captcha: Union[int] = random.randint(100000, 999999)
 
 
 # 登出系统
 class logoutModel(BaseModel):
-    remember_token: str
+    token: Union[str, None]
 
 
 # 邮箱账号注册用户
 class registerModel(BaseModel):
     email: EmailStr
-    verify_code: int
+    captcha: Union[int] = random.randint(100000, 999999)
