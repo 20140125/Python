@@ -28,7 +28,6 @@ async def captcha(request):
 # 用户登录系统
 async def login(users, request):
     try:
-        print(await request.json())
         # 验证验证码是否正确
         if await redisClient.get_value(users.verify_code) is None:
             return await jsonResponse(await return_params(message='verify code not found', code=Code.ERROR), request)
