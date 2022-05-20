@@ -51,13 +51,13 @@ class MySQLdb:
     获取一条结构集
     '''
 
-    def get_one(self, sql, value):
+    async def get_one(self, sql, value):
         result = None
         try:
             self.set_connection()
             self.cursor.execute(sql, value)
             logger.debug(sql)
-            result = self.cursor.fetchone()
+            result = await self.cursor.fetchone()
             self.cloe_connection()
         except Exception as e:
             logger.error('Error fetchone message: {}'.format(e))
@@ -67,13 +67,13 @@ class MySQLdb:
     获取多条结果集
     '''
 
-    def get_lists(self, sql, values):
+    async def get_lists(self, sql, values):
         result = None
         try:
             self.set_connection()
             self.cursor.execute(sql, values)
             logger.debug(sql)
-            result = self.cursor.fetchall()
+            result = await self.cursor.fetchall()
             self.cloe_connection()
         except Exception as e:
             logger.error('Error fetchall message: {}'.format(e))
