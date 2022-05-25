@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 import json
 
-
 from app.middleware.config import MiddlewareMessage
 from db.connection import MySQLdb
 from tools.helper import jsonResponse, return_params
@@ -34,4 +33,3 @@ async def remove(params, request):
             await return_params(lists=params, message='remove system log failed', code=Code.ERROR), request)
     except Exception as e:
         return await jsonResponse(await return_params(message='network error {}'.format(e), code=Code.NETWORK), request)
-

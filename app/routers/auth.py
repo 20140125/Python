@@ -3,8 +3,8 @@
 from fastapi import APIRouter, Request
 
 from app.services.auth import (lists)
-from models.common import Pagination
 from models.auth import saveModel
+from models.common import Pagination
 
 router = APIRouter()
 

@@ -2,11 +2,12 @@
 import json
 import time
 
+from fastapi import Request
+
 from app.middleware.checkLogin import MiddlewareMessage
+from db.crud.SystemLog import insert_log
 from tools.logger import logger
 from tools.redis import redisClient
-from fastapi import Request
-from db.crud.SystemLog import insert_log
 
 ERR_MSG = MiddlewareMessage()
 
