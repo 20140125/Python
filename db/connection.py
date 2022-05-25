@@ -55,7 +55,7 @@ class MySQLdb:
         result = None
         try:
             self.set_connection()
-            self.cursor.execute(sql, value)
+            await self.cursor.execute(sql, value)
             logger.debug(sql)
             result = await self.cursor.fetchone()
             self.cloe_connection()
@@ -71,7 +71,7 @@ class MySQLdb:
         result = None
         try:
             self.set_connection()
-            self.cursor.execute(sql, values)
+            await self.cursor.execute(sql, values)
             logger.debug(sql)
             result = await self.cursor.fetchall()
             self.cloe_connection()
@@ -87,10 +87,10 @@ class MySQLdb:
         result = False
         try:
             self.set_connection()
-            self.cursor.execute(sql, value)
+            await self.cursor.execute(sql, value)
             logger.debug(sql)
             self.connection.commit()
-            result = self.cursor.rowcount == 1
+            result = self.cursor.lastrowid
             self.cloe_connection()
         except Exception as e:
             logger.error('Error update_one message: {}'.format(e))
@@ -104,7 +104,7 @@ class MySQLdb:
         result = False
         try:
             self.set_connection()
-            self.cursor.execute(sql, values)
+            await self.cursor.execute(sql, values)
             logger.debug(sql)
             self.connection.commit()
             result = self.cursor.rowcount == len(values)

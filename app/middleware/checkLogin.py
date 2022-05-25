@@ -2,13 +2,16 @@
 import json
 import time
 
-from fastapi import Request, Response
+from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.middleware.config import MiddlewareMessage
-from db.connection import MySQLdb
+from db.orm.Role import Role
+from db.orm.Users import Users
 from tools.redis import redisClient
 from tools.helper import (jsonResponse, return_params)
+from db.crud.Users import get_one_user
+from db.crud.Role import get_one_role
 
 Code = MiddlewareMessage()
 
@@ -47,14 +50,14 @@ class checkLogin(BaseHTTPMiddleware):
                     return await jsonResponse(
                         await return_params(code=Code.UNAUTHORIZED, message=Code.NOT_LOGIN_MESSAGE), request)
                 #  请求头必须带上Authentication验证用户合法性
-                if not ('authentication' in request.headers):
-                    return await jsonResponse(
-                        await return_params(code=Code.UNAUTHORIZED, message=Code.TOKEN_EMPTY_MESSAGE), request)
+                # if not ('authentication' in request.headers):
+                #     return await jsonResponse(
+                #         await return_params(code=Code.UNAUTHORIZED, message=Code.TOKEN_EMPTY_MESSAGE), request)
                 # 判断Redis是否有这个用户
                 if await redisClient.get_value(params['token']) is None:
                     return await jsonResponse(
                         await return_params(code=Code.UNAUTHORIZED, message=Code.TOKEN_EMPTY_MESSAGE), request)
-                users = MySQLdb.get_one('select * from os_users where remember_token = %s', (params['token']))
+                users = get_one_user([Users.remember_token == params['token']])
                 # 用户账号非法
                 if users is None:
                     return await jsonResponse(
@@ -63,7 +66,7 @@ class checkLogin(BaseHTTPMiddleware):
                 if users['status'] == 2:
                     return await jsonResponse(
                         await return_params(code=Code.UNAUTHORIZED, message=Code.USER_DISABLED_MESSAGE), request)
-                role = MySQLdb.get_one('select auth_api, status, id from os_role where id = %s', (users['role_id']))
+                role = get_one_role([Role.id == users['role_id']])
                 # 角色不存在
                 if role is None:
                     return await jsonResponse(

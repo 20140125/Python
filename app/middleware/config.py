@@ -35,7 +35,7 @@ class MiddlewareMessage(BaseSettings):
     # 用户不存在
     USER_NOT_FOUND_MESSAGE = 'User Not Found'
     # 不登录可以访问地址
-    NOT_LOGIN_ACCESS_URL = ['/api/v1/account/login', '/api/v1/common/captcha']
+    NOT_LOGIN_ACCESS_URL = ['/api/v1/account/login', '/api/v1/common/captcha', '/api/v1/account/register']
 
 
 middlewareMessage = MiddlewareMessage()

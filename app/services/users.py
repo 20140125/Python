@@ -7,10 +7,13 @@ from hashlib import md5
 
 from app.middleware.config import MiddlewareMessage
 from config.app import Settings
-from db.connection import MySQLdb
+from db.crud.Role import get_one_role
+from db.crud.Users import get_one_user
+from db.orm.Users import Users
+from db.orm.Role import Role
+from tools.helper import (jsonResponse, return_params)
 from tools.redis import redisClient
 from tools.token import create_access_token
-from tools.helper import (jsonResponse, return_params)
 
 config = Settings()
 Code = MiddlewareMessage()
@@ -31,12 +34,8 @@ async def login(users, request):
         # 验证验证码是否正确
         if await redisClient.get_value(users.captcha) is None:
             return await jsonResponse(await return_params(message='verify code not found', code=Code.ERROR), request)
-        # 验证通过删除验证码
-        await redisClient.delete_value(users.captcha)
         # 邮箱验证用户信息
-        result = MySQLdb.get_one(
-            'select id, username, email, role_id, ip_address, status, created_at, updated_at, password, salt, remember_token, phone_number, avatar_url, uuid, `char` from os_users where email = %s',
-            (users.email))
+        result = get_one_user([Users.email == users.email])
         if result is None:
             return await jsonResponse(await return_params(message='username not found', code=Code.NOT_FOUND), request)
         # 判断用户密码是否正确
@@ -50,8 +49,11 @@ async def login(users, request):
         # 保存用户名
         await redisClient.set_ex(result['remember_token'].upper(), config.app_refresh_login_time, result['username'])
         # 获取角色权限
-        role = MySQLdb.get_one('select auth_api from os_role where id = %s', (result['role_id']))
+        role = get_one_role([Role.id == result['role_id']])
         result['auth_api'] = json.loads(role['auth_api'])
+        # 验证通过删除验证码
+        await redisClient.delete_value(users.captcha)
+        # 返回数据
         return await jsonResponse(await return_params(lists=result), request)
     except Exception as e:
         return await jsonResponse(await return_params(message='network error {}'.format(e), code=Code.NETWORK), request)
@@ -60,8 +62,7 @@ async def login(users, request):
 # 登出系统
 async def logout(users, request):
     try:
-        result = MySQLdb.get_one('select id, role_id, remember_token from os_users where remember_token = %s',
-                                 (users.token))
+        result = get_one_user([Users.remember_token == users.token])
         if result is None:
             return await jsonResponse(await return_params(code=Code.ERROR), request)
         # 删除保存在Redis的用户TOKEN数据
@@ -76,4 +77,5 @@ async def logout(users, request):
 
 # 注册用户
 async def register(users, request):
-    return await jsonResponse(await return_params(lists=users), request)
+    result = get_one_user([Users.username == 'admin'])
+    return await jsonResponse(await return_params(lists=result), request)

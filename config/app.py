@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     db_username: str = ''
     db_password: str = ''
     db_database: str = ''
+    db_debug: bool = False
     # redis 配置
     redis_host: str = ''
     redis_port: int = 3306
