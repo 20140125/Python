@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 
-class Users(Base):
+class users(Base):
     __tablename__ = 'os_users'
 
     id = Column(Integer, primary_key=True)

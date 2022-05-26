@@ -8,8 +8,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from app.middleware.config import MiddlewareMessage
 from db.crud.role import get_one_role
 from db.crud.users import get_one_user
-from db.orm.role import Role
-from db.orm.users import Users
+from db.orm.role import role
+from db.orm.users import users
 from tools.helper import (jsonResponse, return_params)
 from tools.redis import redisClient
 
@@ -57,27 +57,27 @@ class checkLogin(BaseHTTPMiddleware):
                 if await redisClient.get_value(params['token']) is None:
                     return await jsonResponse(
                         await return_params(code=Code.UNAUTHORIZED, message=Code.TOKEN_EMPTY_MESSAGE), request)
-                users = get_one_user([Users.remember_token == params['token']])
+                user = get_one_user([users.remember_token == params['token']])
                 # 用户账号非法
-                if users is None:
+                if user is None:
                     return await jsonResponse(
                         await return_params(code=Code.FORBIDDEN, message=Code.FORBIDDEN_MESSAGE), request)
                 # 用户被禁用
-                if users['status'] == 2:
+                if user['status'] == 2:
                     return await jsonResponse(
                         await return_params(code=Code.UNAUTHORIZED, message=Code.USER_DISABLED_MESSAGE), request)
-                role = get_one_role([Role.id == users['role_id']])
+                item = get_one_role([role.id == user['role_id']])
                 # 角色不存在
-                if role is None:
+                if item is None:
                     return await jsonResponse(
                         await return_params(code=Code.UNAUTHORIZED, message=Code.ROLE_NOT_EXIST_MESSAGE), request)
                 # 角色被禁用
-                if role['status'] == 2:
+                if item['status'] == 2:
                     return await jsonResponse(
                         await return_params(code=Code.UNAUTHORIZED, message=Code.ROLE_DISABLED_MESSAGE), request)
                 # 如果用户不是超级管理员
-                if role['id'] != 1:
-                    if not (request.url.path in json.loads(role['auth_api'])):
+                if item['id'] != 1:
+                    if not (request.url.path in json.loads(item['auth_api'])):
                         return await jsonResponse(
                             await return_params(code=Code.UNAUTHORIZED, message=Code.FORBIDDEN_MESSAGE), request)
 

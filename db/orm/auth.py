@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 
-class Auth(Base):
+class auth(Base):
     __tablename__ = 'os_auth'
 
     id = Column(Integer, primary_key=True)

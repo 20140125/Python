@@ -2,7 +2,7 @@
 
 
 from db.alchemyConnection import Session
-from db.orm.users import Users
+from db.orm.users import users
 
 session = Session()
 
@@ -11,15 +11,15 @@ session = Session()
 def get_one_user(filters=None):
     if filters is None:
         filters = []
-    return session.query(Users).filter(*filters).first().to_json()
+    return session.query(users).filter(*filters).first().to_json()
 
 
 # 获取用户列表
 def get_user_lists(page, limit, filters=None):
     if filters is None:
         filters = []
-    data = session.query(Users).filter(*filters).limit(limit).offset(limit * (page - 1))
-    total = session.query(Users).filter(*filters).count()
+    data = session.query(users).filter(*filters).limit(limit).offset(limit * (page - 1))
+    total = session.query(users).filter(*filters).count()
     result = []
     for comment in data:
         result.append(comment.to_json())

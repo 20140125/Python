@@ -2,7 +2,7 @@
 
 from app.middleware.config import MiddlewareMessage
 from db.crud.auth import get_auth_lists, save_auth, get_one_auth, update_auth
-from db.orm.auth import Auth
+from db.orm.auth import auth
 from tools.helper import jsonResponse, return_params
 
 Code = MiddlewareMessage()
@@ -23,11 +23,11 @@ async def save(params, request):
         params.id = save_auth(params)
         if params.id is None:
             return await jsonResponse(await return_params(code=Code.ERROR), request)
-        auth = get_one_auth([Auth.id == params.id])
+        item = get_one_auth([auth.id == params.id])
         params.path = params.id
         params.level = 0
-        if auth is not None:
-            params.path = auth['path'] + '-' + params.id
+        if item is not None:
+            params.path = item['path'] + '-' + params.id
             params.level = params.path.count('-')
         res = update_auth(params)
         if res is None:

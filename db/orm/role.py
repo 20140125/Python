@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 
-class Role(Base):
+class role(Base):
     __tablename__ = 'os_role'
 
     id = Column(Integer, primary_key=True)
