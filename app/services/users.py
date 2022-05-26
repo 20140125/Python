@@ -7,10 +7,10 @@ from hashlib import md5
 
 from app.middleware.config import MiddlewareMessage
 from config.app import Settings
-from db.crud.Role import get_one_role
-from db.crud.Users import get_one_user
-from db.orm.Role import Role
-from db.orm.Users import Users
+from db.crud.role import get_one_role
+from db.crud.users import get_one_user
+from db.orm.role import Role
+from db.orm.users import Users
 from tools.helper import (jsonResponse, return_params)
 from tools.redis import redisClient
 from tools.token import create_access_token

@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 from app.middleware.config import MiddlewareMessage
-from db.crud.Auth import get_auth_lists
+from db.crud.auth import get_auth_lists, save_auth, get_one_auth, update_auth
+from db.orm.auth import Auth
 from tools.helper import jsonResponse, return_params
 
 Code = MiddlewareMessage()
@@ -12,5 +13,25 @@ async def lists(params, request):
     try:
         item = get_auth_lists(params.page, params.limit)
         return await jsonResponse(await return_params(lists=item), request)
+    except Exception as e:
+        return await jsonResponse(await return_params(message='network error {}'.format(e), code=Code.NETWORK), request)
+
+
+# 保存权限
+async def save(params, request):
+    try:
+        params.id = save_auth(params)
+        if params.id is None:
+            return await jsonResponse(await return_params(code=Code.ERROR), request)
+        auth = get_one_auth([Auth.id == params.id])
+        params.path = params.id
+        params.level = 0
+        if auth is not None:
+            params.path = auth['path'] + '-' + params.id
+            params.level = params.path.count('-')
+        res = update_auth(params)
+        if res is None:
+            return await jsonResponse(await return_params(code=Code.ERROR), request)
+        return await jsonResponse(await return_params(lists=params), request)
     except Exception as e:
         return await jsonResponse(await return_params(message='network error {}'.format(e), code=Code.NETWORK), request)
