@@ -9,8 +9,7 @@ from app.middleware.config import MiddlewareMessage
 from config.app import Settings
 from db.crud.role import get_one_role
 from db.crud.users import get_one_user
-from db.orm.role import role
-from db.orm.users import users
+import db.models as models
 from tools.helper import (jsonResponse, return_params)
 from tools.redis import redisClient
 from tools.token import create_access_token
@@ -36,7 +35,7 @@ async def login(params, request):
         if await redisClient.get_value(params.captcha) is None:
             return await jsonResponse(await return_params(message='verify code not found', code=Code.ERROR), request)
         # 邮箱验证用户信息
-        result = get_one_user([users.email == params.email])
+        result = get_one_user([models.Users.email == params.email])
         if result is None:
             return await jsonResponse(await return_params(message='username not found', code=Code.NOT_FOUND), request)
         # 判断用户密码是否正确
@@ -50,7 +49,7 @@ async def login(params, request):
         # 保存用户名
         await redisClient.set_ex(result['remember_token'].upper(), config.app_refresh_login_time, result['username'])
         # 获取角色权限
-        item = get_one_role([role.id == result['role_id']])
+        item = get_one_role([models.Role.id == result['role_id']])
         result['auth_api'] = json.loads(item['auth_api'])
         # 验证通过删除验证码
         await redisClient.delete_value(params.captcha)
@@ -63,7 +62,7 @@ async def login(params, request):
 # 登出系统
 async def logout(params, request):
     try:
-        result = get_one_user([compare_digest(users.remember_token, params.token)])
+        result = get_one_user([compare_digest(models.Users.remember_token, params.token)])
         if result is None:
             return await jsonResponse(await return_params(code=Code.ERROR), request)
         # 删除保存在Redis的用户TOKEN数据

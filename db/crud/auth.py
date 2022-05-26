@@ -2,7 +2,7 @@
 
 
 from db.alchemyConnection import Session
-from db.orm.auth import auth
+import db.models as models
 
 session = Session()
 
@@ -11,15 +11,15 @@ session = Session()
 def get_one_auth(filters=None):
     if filters is None:
         filters = []
-    return session.query(auth).filter(*filters).first().to_json()
+    return session.query(models.Auth).filter(*filters).first().to_json()
 
 
 # 获取权限列表
 def get_auth_lists(page, limit, filters=None):
     if filters is None:
         filters = []
-    data = session.query(auth).filter(*filters).limit(limit).offset(limit * (page - 1))
-    total = session.query(auth).filter(*filters).count()
+    data = session.query(models.Auth).filter(*filters).limit(limit).offset(limit * (page - 1))
+    total = session.query(models.Auth).filter(*filters).count()
     result = []
     for comment in data:
         result.append(comment.to_json())
@@ -29,8 +29,8 @@ def get_auth_lists(page, limit, filters=None):
 # 保存权限
 def save_auth(params):
     params.api = params.href.replace('/admin/', '/api/v1/')
-    item = auth(name=params.name, href=params.href, status=params.status, pid=params.pid,
-                api=params.api)
+    item = models.Auth(name=params.name, href=params.href, status=params.status, pid=params.pid,
+                       api=params.api)
     session.add(item)
     session.commit()
     session.refresh(item)
@@ -39,7 +39,15 @@ def save_auth(params):
 
 # 保存数据
 def update_auth(params):
-    item = auth(name=params.name, href=params.href, status=params.status, pid=params.pid,
-                api=params.api, level=params.level, path=params.path)
-    session.query(auth).filter(auth.id == params.id).update(item)
-    return session.commit()
+    item = get_one_auth([models.Auth.id == params.id])
+    for key, value in params:
+        item[key] = value
+    # item.path = params.path
+    # item.id = params.id
+    # item.pid = params.pid
+    # item.name = params.name
+    # item.href = params.href
+    # item.status = params.status
+    # item.level = params.level
+    # item.api = params.api
+    return session.query(models.Auth).filter([models.Auth.id == params.id]).update(params)

@@ -8,8 +8,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from app.middleware.config import MiddlewareMessage
 from db.crud.role import get_one_role
 from db.crud.users import get_one_user
-from db.orm.role import role
-from db.orm.users import users
+import db.models as models
 from tools.helper import (jsonResponse, return_params)
 from tools.redis import redisClient
 
@@ -57,7 +56,7 @@ class checkLogin(BaseHTTPMiddleware):
                 if await redisClient.get_value(params['token']) is None:
                     return await jsonResponse(
                         await return_params(code=Code.UNAUTHORIZED, message=Code.TOKEN_EMPTY_MESSAGE), request)
-                user = get_one_user([users.remember_token == params['token']])
+                user = get_one_user(filters=[models.Users.remember_token == params['token']])
                 # 用户账号非法
                 if user is None:
                     return await jsonResponse(
@@ -66,7 +65,7 @@ class checkLogin(BaseHTTPMiddleware):
                 if user['status'] == 2:
                     return await jsonResponse(
                         await return_params(code=Code.UNAUTHORIZED, message=Code.USER_DISABLED_MESSAGE), request)
-                item = get_one_role([role.id == user['role_id']])
+                item = get_one_role(filters=[models.Role.id == user['role_id']])
                 # 角色不存在
                 if item is None:
                     return await jsonResponse(

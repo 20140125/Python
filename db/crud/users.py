@@ -2,24 +2,24 @@
 
 
 from db.alchemyConnection import Session
-from db.orm.users import users
+import db.models as models
 
-session = Session()
+# session = Session()
 
 
 # 获取单个用户
-def get_one_user(filters=None):
+def get_one_user(db: Session, filters=None):
     if filters is None:
         filters = []
-    return session.query(users).filter(*filters).first().to_json()
+    return db.query(models.Users).filter(*filters).first().to_json()
 
 
 # 获取用户列表
-def get_user_lists(page, limit, filters=None):
+def get_user_lists(db: Session, page, limit, filters=None):
     if filters is None:
         filters = []
-    data = session.query(users).filter(*filters).limit(limit).offset(limit * (page - 1))
-    total = session.query(users).filter(*filters).count()
+    data = db.query(models.Users).filter(*filters).limit(limit).offset(limit * (page - 1))
+    total = db.query(models.Users).filter(*filters).count()
     result = []
     for comment in data:
         result.append(comment.to_json())

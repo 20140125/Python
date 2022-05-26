@@ -2,7 +2,7 @@
 
 
 from db.alchemyConnection import Session
-from db.orm.systemLog import systemLog
+import db.models as models
 
 session = Session()
 
@@ -11,8 +11,8 @@ session = Session()
 async def get_log_lists(page, limit, filters=None):
     if filters is None:
         filters = []
-    items = session.query(systemLog).filter(*filters).limit(limit).offset(limit * (page - 1)).to_json()
-    total = session.query(systemLog).filter(*filters).count()
+    items = session.query(models.Log).filter(*filters).limit(limit).offset(limit * (page - 1)).to_json()
+    total = session.query(models.Log).filter(*filters).count()
     result = []
     for comment in items:
         result.append(comment.to_json())
@@ -21,8 +21,8 @@ async def get_log_lists(page, limit, filters=None):
 
 # 保存系统日志
 def insert_log(params):
-    log = systemLog(username=params['username'], url=params['url'], ip_address=params['ip_address'], log=params['log'],
-                    created_at=params['created_at'], day=params['day'])
+    log = models.Log(username=params['username'], url=params['url'], ip_address=params['ip_address'], log=params['log'],
+                     created_at=params['created_at'], day=params['day'])
     session.add(log)
     session.commit()
     session.refresh(log)
@@ -31,5 +31,5 @@ def insert_log(params):
 
 # 删除日志
 def delete_log(params):
-    session.query(systemLog).filter(systemLog.id == params.id).delete()
+    session.query(models.Log).filter(models.Log.id == params.id).delete()
     return session.commit()
