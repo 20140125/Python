@@ -7,6 +7,7 @@ import time
 from tools import helper
 from tools.logger import logger
 from tools.redis import redisClient
+from db.models import Log
 
 
 # 获取日志列表
@@ -24,10 +25,9 @@ async def lists(pagination, request):
 # 删除日志
 async def remove(params, request):
     try:
-        count = systemLog.delete(params)
-        if count > 0:
-            return await helper.jsonResponse(request, lists=params, message='remove system log successfully')
-        return await helper.jsonResponse(request, lists=params, message='remove system log failed', status=helper.code.ERROR)
+        if systemLog.delete([Log.id == params.id]):
+            return await helper.jsonResponse(request, lists={'id': params.id}, message='remove system log successfully')
+        return await helper.jsonResponse(request, lists={'id': params.id}, message='remove system log failed', status=helper.code.ERROR)
     except Exception as e:
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 

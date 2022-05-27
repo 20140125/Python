@@ -45,10 +45,13 @@ def save(params):
 
 
 # 删除日志
-def delete(params):
+def delete(filters=None):
     try:
-        session.query(Log).filter(Log.id == params.id).delete()
-        return session.commit()
+        if filters is None:
+            filters = []
+        session.query(Log).filter(*filters).delete()
+        session.commit()
+        return True
     except Exception as e:
         logger.error('delete_log message：{}'.format(e))
         return None
