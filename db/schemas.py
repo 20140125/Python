@@ -39,6 +39,7 @@ class loginModel(BaseModel):
 
 # 登出系统
 class logoutModel(BaseModel):
+    remember_token: Union[str, None]
     token: Union[str, None]
 
 

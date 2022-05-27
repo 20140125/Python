@@ -2,12 +2,12 @@
 
 from fastapi import APIRouter, Request
 
-import app.services.common as common
+from app.services import common
 
 router = APIRouter()
 
 
 # 生成验证码（随机数）
 @router.post('/common/captcha')
-async def get_captcha(request: Request):
+async def captcha(request: Request):
     return await common.captcha(request)

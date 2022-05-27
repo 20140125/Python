@@ -1,39 +1,33 @@
 #!/usr/bin/python3
 
-import db.crud.auth as auth_services
-import db.models as models
-import tools.helper as helper
-from app.middleware.config import MiddlewareMessage
-
-Code = MiddlewareMessage()
+from db.crud import auth
+from db import models
+from tools import helper
 
 
 # 获取权限列表
 async def lists(params, request):
     try:
-        item = auth_services.get_auth_lists(params.page, params.limit)
-        return await helper.jsonResponse(await helper.return_params(lists=item), request)
+        item = auth.lists(params.page, params.limit)
+        return await helper.jsonResponse(request, lists=item)
     except Exception as e:
-        return await helper.jsonResponse(
-            await helper.return_params(message='network error {}'.format(e), code=Code.NETWORK), request)
+        return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 
 
 # 保存权限
 async def save(params, request):
     try:
-        params.id = auth_services.save_auth(params)
+        params.id = auth.save(params)
         if params.id is None:
-            return await helper.jsonResponse(await helper.return_params(code=Code.ERROR), request)
-        item = auth_services.get_one_auth([models.Auth.id == params.id])
-        params.path = params.id
+            return await helper.jsonResponse(status=helper.code.ERROR, message='save auth error')
+        item = auth.get([models.Auth.id == params.pid])
+        params.path = str(params.id)
         params.level = 0
         if item is not None:
-            params.path = item['path'] + '-' + params.id
+            params.path = '{}-{}'.format(item['path'], str(params.id))
             params.level = params.path.count('-')
-        res = auth_services.update_auth(params)
-        if res is None:
-            return await helper.jsonResponse(await helper.return_params(code=Code.ERROR), request)
-        return await helper.jsonResponse(await helper.return_params(lists=params), request)
+        if auth.update(params):
+            return await helper.jsonResponse(request, lists=({'id': params.id}))
+        return await helper.jsonResponse(request, status=helper.code.ERROR, message='update auth error')
     except Exception as e:
-        return await helper.jsonResponse(
-            await helper.return_params(message='network error {}'.format(e), code=Code.NETWORK), request)
+        return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)

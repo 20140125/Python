@@ -2,25 +2,34 @@
 
 
 from db.alchemyConnection import Session
-import db.models as models
+from db.models import Role
+from tools.logger import logger
 
 session = Session()
 
 
 # 获取角色
-def get_one_role(filters=None):
-    if filters is None:
-        filters = []
-    return session.query(models.Role).filter(*filters).first().to_json()
+def get(filters=None):
+    try:
+        if filters is None:
+            filters = []
+        return session.query(Role).filter(*filters).first().to_json()
+    except Exception as e:
+        logger.error('get_one_role message：{}'.format(e))
+        return None
 
 
 # 获取角色列表
-def get_role_lists(page, limit, filters=None):
-    if filters is None:
-        filters = []
-    data = session.query(models.Role).filter(*filters).limit(limit).offset(limit * (page - 1))
-    total = session.query(models.Role).filter(*filters).count()
-    result = []
-    for comment in data:
-        result.append(comment.to_json())
-    return {'items': result, 'total': total}
+def lists(page, limit, filters=None):
+    try:
+        if filters is None:
+            filters = []
+        data = session.query(Role).filter(*filters).limit(limit).offset(limit * (page - 1))
+        total = session.query(Role).filter(*filters).count()
+        result = []
+        for comment in data:
+            result.append(comment.to_json())
+        return {'items': result, 'total': total}
+    except Exception as e:
+        logger.error('get_one_role message：{}'.format(e))
+        return None
