@@ -61,9 +61,6 @@ async def logout(params, request):
             return await helper.jsonResponse(request, status=helper.code.ERROR)
         # 删除保存在Redis的用户TOKEN数据
         await redisClient.delete_value(params.token)
-        token = await helper.create_access_token({'authentication': '{}{}'.format(str(result['username']), str(datetime.utcnow()))})
-        result['remember_token'] = token
-        # 更新用户表TOKEN
         return await helper.jsonResponse(request, lists=result)
     except Exception as e:
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
@@ -72,5 +69,4 @@ async def logout(params, request):
 # 注册用户
 async def register(params, request):
     result = users.get([models.Users.email == 'loveqin0125@foxmail.com'])
-    print(result['username'])
     return await helper.jsonResponse(request, lists=result)
