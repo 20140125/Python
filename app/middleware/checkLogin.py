@@ -49,9 +49,9 @@ class checkLogin(BaseHTTPMiddleware):
                     return await helper.jsonResponse(
                         await helper.return_params(code=Code.UNAUTHORIZED, message=Code.NOT_LOGIN_MESSAGE), request)
                 #  请求头必须带上Authentication验证用户合法性
-                # if not ('authentication' in request.headers):
-                #     return await jsonResponse(
-                #         await return_params(code=Code.UNAUTHORIZED, message=Code.TOKEN_EMPTY_MESSAGE), request)
+                if not ('authentication' in request.headers):
+                    return await helper.jsonResponse(
+                        await helper.return_params(code=Code.UNAUTHORIZED, message=Code.TOKEN_EMPTY_MESSAGE), request)
                 # 判断Redis是否有这个用户
                 if await redisClient.get_value(params['token']) is None:
                     return await helper.jsonResponse(
@@ -65,18 +65,18 @@ class checkLogin(BaseHTTPMiddleware):
                 if user['status'] == 2:
                     return await helper.jsonResponse(
                         await helper.return_params(code=Code.UNAUTHORIZED, message=Code.USER_DISABLED_MESSAGE), request)
-                item = get_one_role(filters=[models.Role.id == user['role_id']])
+                role = get_one_role([models.Role.id == user['role_id']])
                 # 角色不存在
-                if item is None:
+                if role is None:
                     return await helper.jsonResponse(
                         await helper.return_params(code=Code.UNAUTHORIZED, message=Code.ROLE_NOT_EXIST_MESSAGE), request)
                 # 角色被禁用
-                if item['status'] == 2:
+                if role['status'] == 2:
                     return await helper.jsonResponse(
                         await helper.return_params(code=Code.UNAUTHORIZED, message=Code.ROLE_DISABLED_MESSAGE), request)
                 # 如果用户不是超级管理员
-                if item['id'] != 1:
-                    if not (request.url.path in json.loads(item['auth_api'])):
+                if role['id'] != 1:
+                    if not (request.url.path in json.loads(role['auth_api'])):
                         return await helper.jsonResponse(
                             await helper.return_params(code=Code.UNAUTHORIZED, message=Code.FORBIDDEN_MESSAGE), request)
 
