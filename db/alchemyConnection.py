@@ -1,5 +1,4 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 from config.app import Settings
@@ -17,5 +16,3 @@ engine = create_engine('mysql+pymysql://{username}:{password}@{host}/{database}'
 )
 # 创建数据库会话
 Session = sessionmaker(bind=engine)
-# 声明基类
-Base = declarative_base()

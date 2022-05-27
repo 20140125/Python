@@ -1,19 +1,24 @@
 #!/usr/bin/python3
 import json
 import time
+import random
 
 from fastapi import Request
 
-from app.middleware.checkLogin import MiddlewareMessage
+from app.middleware.config import MiddlewareMessage
 from db.crud.systemLog import insert_log
+from config.app import Settings
+from tools import helper
 from tools.logger import logger
 from tools.redis import redisClient
 
 ERR_MSG = MiddlewareMessage()
 
+config = Settings()
+
 
 # 保存日志
-async def saveLog(params, request: Request):
+async def save_log(params, request: Request):
     try:
         request_params = params['lists']
         username = 'tourist'
@@ -37,3 +42,12 @@ async def saveLog(params, request: Request):
         return insert_log(log)
     except Exception as e:
         logger.error('save log error: {}'.format(e))
+
+
+# 生成验证码
+async def captcha(request):
+    # 生成随机数
+    num = random.randint(100000, 999999)
+    # 保存到REDIS
+    await redisClient.set_ex(num, config.set_redis_timeout, num)
+    return await helper.jsonResponse(await helper.return_params(lists={'captcha': num}), request)

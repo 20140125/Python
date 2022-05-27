@@ -1,9 +1,13 @@
 #!/usr/bin/python3
 
 from sqlalchemy import Column, Integer, String, Text
-from db.alchemyConnection import Base
+from sqlalchemy.ext.declarative import declarative_base
+
+# 声明基类
+Base = declarative_base()
 
 
+# 权限
 class Auth(Base):
     __tablename__ = 'os_auth'
     id = Column(Integer, primary_key=True)
@@ -19,6 +23,7 @@ class Auth(Base):
         return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
 
 
+# 角色
 class Role(Base):
     __tablename__ = 'os_role'
     id = Column(Integer, primary_key=True)
@@ -33,6 +38,7 @@ class Role(Base):
         return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
 
 
+# 日志
 class Log(Base):
     __tablename__ = 'os_system_log'
     id = Column(Integer, primary_key=True)
@@ -48,6 +54,7 @@ class Log(Base):
         return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
 
 
+# 用户
 class Users(Base):
     __tablename__ = 'os_users'
     id = Column(Integer, primary_key=True)
@@ -67,4 +74,5 @@ class Users(Base):
     char = Column(String(length=1))
 
     def to_json(self):
+        print(self)
         return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
