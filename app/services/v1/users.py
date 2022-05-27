@@ -25,14 +25,23 @@ async def login(params, request):
         password = md5(
             (md5(params.password.encode('utf-8')).hexdigest() + result['salt']).encode('utf-8')).hexdigest()
         if compare_digest(result['password'], password):
-            return await helper.jsonResponse(request, message='username and password check failed',
-                                             status=helper.code.ERROR)
+            return await helper.jsonResponse(
+                request,
+                message='username and password check failed',
+                status=helper.code.ERROR
+            )
         # 保存用户TOKEN数据在Redis
-        await redisClient.set_ex(result['remember_token'], helper.settings.app_refresh_login_time,
-                                 result['remember_token'].upper())
+        await redisClient.set_ex(
+            result['remember_token'],
+            helper.settings.app_refresh_login_time,
+            result['remember_token'].upper()
+        )
         # 保存用户名
-        await redisClient.set_ex(result['remember_token'].upper(), helper.settings.app_refresh_login_time,
-                                 result['username'])
+        await redisClient.set_ex(
+            result['remember_token'].upper(),
+            helper.settings.app_refresh_login_time,
+            result['username']
+        )
         # 获取角色权限
         item = role.get([models.Role.id == result['role_id']])
         result['auth_api'] = json.loads(item['auth_api'])
