@@ -56,11 +56,11 @@ async def lists(params, request):
 # 登出系统
 async def logout(params, request):
     try:
-        result = users.get([models.Users.remember_token == params.remember_token])
+        result = users.get([models.Users.remember_token == params.token])
         if result is None:
             return await helper.jsonResponse(request, status=helper.code.ERROR)
         # 删除保存在Redis的用户TOKEN数据
-        await redisClient.delete_value(params.remember_token)
+        await redisClient.delete_value(params.token)
         token = await helper.create_access_token({'authentication': '{}{}'.format(str(result['username']), str(datetime.utcnow()))})
         result['remember_token'] = token
         # 更新用户表TOKEN

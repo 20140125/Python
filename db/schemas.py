@@ -15,6 +15,7 @@ class authModel(BaseModel):
     path: Union[str, None]
     level: Union[int] = 0
     status: Union[int] = 1
+    token: Union[str, None]
 
 
 # 分页查询信息
@@ -39,7 +40,6 @@ class loginModel(BaseModel):
 
 # 登出系统
 class logoutModel(BaseModel):
-    remember_token: Union[str, None]
     token: Union[str, None]
 
 
