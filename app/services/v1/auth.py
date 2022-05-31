@@ -32,17 +32,23 @@ return JSONResponse
 
 async def save(params, request):
     try:
-        params.id = auth.save(params)
+        params.id = auth.save(models.Auth(
+            name=params.name,
+            href=params.href,
+            status=params.status,
+            pid=params.pid,
+            api=params.href.replace('/admin/', '/api/v1/')
+        ))
         if params.id is None:
-            return await helper.jsonResponse(status=helper.code.ERROR, message='save auth error')
-        item = auth.get([models.Auth.id == params.pid])
+            return await helper.jsonResponse(request, status=helper.code.ERROR)
+        result = auth.get([models.Auth.id == params.pid])
         params.path = str(params.id)
         params.level = 0
-        if item is not None:
-            params.path = '{}-{}'.format(item['path'], str(params.id))
+        if result is not None:
+            params.path = '{}-{}'.format(result['path'], str(params.id))
             params.level = params.path.count('-')
         if auth.update(params):
             return await helper.jsonResponse(request, lists=({'id': params.id}))
-        return await helper.jsonResponse(request, status=helper.code.ERROR, message='update auth error')
+        return await helper.jsonResponse(request, status=helper.code.ERROR)
     except Exception as e:
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)

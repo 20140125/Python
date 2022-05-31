@@ -1,7 +1,8 @@
 #!/usr/bin/python3
+import time
 
 from db.alchemyConnection import Session
-from db.models import Users, to_json
+from db import models
 from tools.logger import logger
 
 session = Session()
@@ -17,8 +18,7 @@ def get(filters=None):
     try:
         if filters is None:
             filters = []
-        user = session.query(Users).filter(*filters).first()
-        return to_json(user)
+        return models.to_json(session.query(models.Users).filter(*filters).first())
     except Exception as e:
         logger.error('get_user message：{}'.format(e))
         return None
@@ -35,11 +35,11 @@ def lists(page, limit, filters=None):
     try:
         if filters is None:
             filters = []
-        data = session.query(Users).filter(*filters).limit(limit).offset(limit * (page - 1))
-        total = session.query(Users).filter(*filters).count()
+        data = session.query(models.Users).filter(*filters).limit(limit).offset(limit * (page - 1))
+        total = session.query(models.Users).filter(*filters).count()
         result = []
         for column in data:
-            result.append(to_json(column))
+            result.append(models.to_json(column))
         return {'items': result, 'total': total}
     except Exception as e:
         logger.error('user_list message：{}'.format(e))
@@ -53,10 +53,10 @@ todo：获取所有用户
 
 def all_users():
     try:
-        data = session.query(Users).all()
+        data = session.query(models.Users).all()
         result = []
         for column in data:
-            result.append(to_json(column))
+            result.append(models.to_json(column))
         return result
     except Exception as e:
         logger.error('all_users message：{}'.format(e))
@@ -65,33 +65,53 @@ def all_users():
 
 """
 todo：保存用户
-Parameter params of db.crud.users.save
-params: {username, email, role_id, ip_address, status, created_at, updated_at, password, salt, remember_token, phone_number, avatar_url, uuid, char}
+Parameter user of db.crud.users.save
+user: db.models.Users
 """
 
 
-def save(params):
+def save(user):
     try:
-        user = Users(
-            username=params.username,
-            email=params.email,
-            role_id=params.role_id,
-            ip_address=params.ip_address,
-            status=params.status,
-            created_at=params.created_at,
-            updated_at=params.updated_at,
-            password=params.password,
-            salt=params.salt,
-            remember_token=params.remember_token,
-            phone_number=params.phone_number,
-            avatar_url=params.avatar_url,
-            uuid=params.uuid,
-            char=params.char
-        )
         session.add(user)
         session.commit()
         session.refresh(user)
         return user.id
+    except Exception as e:
+        logger.error('save_user message：{}'.format(e))
+        return None
+
+
+"""
+todo：更新用户
+Parameter user of db.crud.users.update
+(user: db.models.Users)
+return Optional[bool]
+"""
+
+
+def update(user):
+    try:
+        item = session.query(models.Users).filter(models.Users.id == user.id).first()
+        item.uuid = user.uuid + '{}'.format(user.id)
+        item.updated_at = int(time.time()),
+        if 'status' in user:
+            item.status = user.status
+        if 'username' in user:
+            item.username = user.username
+        if 'password' in user:
+            item.password = user.password
+        if 'remember_token' in user:
+            item.remember_token = user.remember_token
+        if 'salt' in user:
+            item.salt = user.salt
+        if 'avatar_url' in user:
+            item.avatar_url = user.avatar_url
+        if 'role_id' in user:
+            item.role_id = user.role_id
+        if 'phone_number' in user:
+            item.phone_number = user.phone_number
+        session.commit()
+        return True
     except Exception as e:
         logger.error('save_user message：{}'.format(e))
         return None

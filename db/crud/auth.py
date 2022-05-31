@@ -2,7 +2,7 @@
 
 
 from db.alchemyConnection import Session
-from db.models import Auth, to_json
+from db import models
 from tools.logger import logger
 
 session = Session()
@@ -18,8 +18,8 @@ def get(filters=None):
     try:
         if filters is None:
             filters = []
-        auth = session.query(Auth).filter(*filters).first()
-        return to_json(auth)
+        auth = session.query(models.Auth).filter(*filters).first()
+        return models.to_json(auth)
     except Exception as e:
         logger.error('get_one_auth message：{}'.format(e))
         return None
@@ -36,11 +36,11 @@ def lists(page, limit, filters=None):
     try:
         if filters is None:
             filters = []
-        data = session.query(Auth).filter(*filters).limit(limit).offset(limit * (page - 1))
-        total = session.query(Auth).filter(*filters).count()
+        data = session.query(models.Auth).filter(*filters).limit(limit).offset(limit * (page - 1))
+        total = session.query(models.Auth).filter(*filters).count()
         result = []
         for column in data:
-            result.append(to_json(column))
+            result.append(models.to_json(column))
         return {'items': result, 'total': total}
     except Exception as e:
         logger.error('get_auth_lists message：{}'.format(e))
@@ -54,20 +54,12 @@ params: {api, href, name, status, pid}
 """
 
 
-def save(params):
+def save(auth):
     try:
-        params.api = params.href.replace('/admin/', '/api/v1/')
-        item = Auth(
-            name=params.name,
-            href=params.href,
-            status=params.status,
-            pid=params.pid,
-            api=params.api
-        )
-        session.add(item)
+        session.add(auth)
         session.commit()
-        session.refresh(item)
-        return item.id
+        session.refresh(auth)
+        return auth.id
     except Exception as e:
         logger.error('save_auth message：{}'.format(e))
         return None
@@ -82,15 +74,23 @@ params: {id, path, pid, name, href, status, level, api}
 
 def update(params):
     try:
-        item = session.query(Auth).filter(Auth.id == params.id).first()
-        item.path = params.path
-        item.id = params.id
-        item.pid = params.pid
-        item.name = params.name
-        item.href = params.href
-        item.status = params.status
-        item.level = params.level
-        item.api = params.api
+        item = session.query(models.Auth).filter(models.Auth.id == params.id).first()
+        if 'path' in params:
+            item.path = params.path
+        if 'path' in params:
+            item.id = params.id
+        if 'pid' in params:
+            item.pid = params.pid
+        if 'name' in params:
+            item.name = params.name
+        if 'href' in params:
+            item.href = params.href
+        if 'status' in params:
+            item.status = params.status
+        if 'level' in params:
+            item.level = params.level
+        if 'api' in params:
+            item.api = params.api
         session.commit()
         return True
     except Exception as e:

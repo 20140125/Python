@@ -3,6 +3,7 @@
 import json
 import time
 
+from db import models
 from db.crud import systemLog
 from db.models import Log
 from tools import helper
@@ -65,18 +66,18 @@ async def save(params, request):
             # 没有登录可以访问的接口获取不到令牌
             if not (request.url.path in helper.code.NOT_LOGIN_ACCESS_URL):
                 username = await redisClient.get_value(request_params['token'].upper())
-        log = {
-            'username': username,
-            'url': request.url,
-            'ip_address': request.client.host,
-            'log': json.dumps({
+        log = models.Log(
+            username=username,
+            url=request.url,
+            ip_address=request.client.host,
+            log=json.dumps({
                 'message': params['message'],
                 'request_params': request_params,
                 'response_params': params
             }, ensure_ascii=True),
-            'created_at': int(time.time()),
-            'day': time.strftime("%Y%m%d", time.localtime())
-        }
+            created_at=int(time.time()),
+            day=time.strftime("%Y%m%d", time.localtime())
+        )
         return systemLog.save(log)
     except Exception as e:
         logger.error('save log error: {}'.format(e))

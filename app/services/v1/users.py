@@ -2,6 +2,7 @@
 
 import json
 import random
+import time
 from hashlib import md5
 from secrets import compare_digest
 
@@ -109,9 +110,36 @@ return JSONResponse
 
 
 async def register(params, request):
-    result = users.get([models.Users.email == 'loveqin0125@foxmail.com'])
-    print(await get_avatar_url())
-    return await helper.jsonResponse(request, lists=result)
+    try:
+        # 验证验证码是否正确
+        if await redisClient.get_value(params.captcha) is None:
+            return await helper.jsonResponse(request, message='verify code not found', status=helper.code.ERROR)
+        salt = await helper.set_random_str()
+        token = await helper.create_access_token({'authentication': '{}{}'.format(params.email, str(time.time()))})
+        password = md5((md5(helper.settings.default_password.encode('utf-8')).hexdigest() + salt).encode('utf-8')).hexdigest()
+        user = models.Users(
+            avatar_url=await get_avatar_url(),
+            salt=salt,
+            email=params.email,
+            password=password,
+            role_id=2,
+            status=1,
+            ip_address=request.client.host,
+            created_at=int(time.time()),
+            updated_at=int(time.time()),
+            remember_token=token,
+            uuid=helper.settings.default_uuid,
+            phone_number=''
+        )
+        user_id = users.save(user)
+        if user_id is None:
+            return await helper.jsonResponse(request, status=helper.code.ERROR)
+        if users.update({'id': user_id, 'uuid': helper.settings.default_uuid}):
+            # 保存用户个人中心信息
+            return await helper.jsonResponse(request, lists=({'id': user_id}))
+        return await helper.jsonResponse(request, status=helper.code.ERROR)
+    except Exception as e:
+        return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 
 
 """

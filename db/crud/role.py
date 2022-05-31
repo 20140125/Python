@@ -2,7 +2,7 @@
 
 
 from db.alchemyConnection import Session
-from db.models import Role, to_json
+from db import models
 from tools.logger import logger
 
 session = Session()
@@ -18,8 +18,7 @@ def get(filters=None):
     try:
         if filters is None:
             filters = []
-        role = session.query(Role).filter(*filters).first()
-        return to_json(role)
+        return models.to_json(session.query(models.Role).filter(*filters).first())
     except Exception as e:
         logger.error('get_one_role message：{}'.format(e))
         return None
@@ -36,11 +35,11 @@ def lists(page, limit, filters=None):
     try:
         if filters is None:
             filters = []
-        data = session.query(Role).filter(*filters).limit(limit).offset(limit * (page - 1))
-        total = session.query(Role).filter(*filters).count()
+        data = session.query(models.Role).filter(*filters).limit(limit).offset(limit * (page - 1))
+        total = session.query(models.Role).filter(*filters).count()
         result = []
         for column in data:
-            result.append(to_json(column))
+            result.append(models.to_json(column))
         return {'items': result, 'total': total}
     except Exception as e:
         logger.error('get_one_role message：{}'.format(e))
