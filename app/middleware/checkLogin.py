@@ -10,8 +10,13 @@ from db.crud import users, role as roles
 from tools import helper
 from tools.redis import redisClient
 
+"""
+todo：设置主体内容
+app.middleware.checkLogin async
+def set_body(request: {receive, _receive}) -> Coroutine[Any, Any, None]
+"""
 
-# 设置主体内容
+
 async def set_body(request):
     receive_ = await request.receive()
 
@@ -21,7 +26,13 @@ async def set_body(request):
     request._receive = receive
 
 
-# 校验登录权限
+"""
+todo：校验登录权限
+app.middleware.checkLogin class 
+checkLogin(BaseHTTPMiddleware)
+"""
+
+
 class checkLogin(BaseHTTPMiddleware):
     def __init__(self, app):
         super().__init__(app)
@@ -42,31 +53,39 @@ class checkLogin(BaseHTTPMiddleware):
                 params = await request.json()
                 # 判断用户否登录系统
                 if not ('token' in params):
-                    return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED, message=helper.code.NOT_LOGIN_MESSAGE)
+                    return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED,
+                                                     message=helper.code.NOT_LOGIN_MESSAGE)
                 #  请求头必须带上Authentication验证用户合法性
-                # if not ('authentication' in request.headers):
-                #     return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED, message=helper.code.TOKEN_EMPTY_MESSAGE)
+                if not ('authentication' in request.headers):
+                    return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED,
+                                                     message=helper.code.TOKEN_EMPTY_MESSAGE)
                 # 判断Redis是否有这个用户
-                # if await redisClient.get_value(params['token']) is None:
-                #     return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED, message=helper.code.TOKEN_EMPTY_MESSAGE)
+                if await redisClient.get_value(params['token']) is None:
+                    return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED,
+                                                     message=helper.code.TOKEN_EMPTY_MESSAGE)
                 user = users.get([models.Users.remember_token == params['token']])
                 # 用户账号非法
                 if user is None:
-                    return await helper.jsonResponse(request, status=helper.code.FORBIDDEN, message=helper.code.FORBIDDEN_MESSAGE)
+                    return await helper.jsonResponse(request, status=helper.code.FORBIDDEN,
+                                                     message=helper.code.FORBIDDEN_MESSAGE)
                 # 用户被禁用
                 if user['status'] == 2:
-                    return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED, message=helper.code.USER_DISABLED_MESSAGE)
+                    return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED,
+                                                     message=helper.code.USER_DISABLED_MESSAGE)
                 role = roles.get([models.Role.id == user['role_id']])
                 # 角色不存在
                 if role is None:
-                    return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED, message=helper.code.ROLE_NOT_EXIST_MESSAGE)
+                    return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED,
+                                                     message=helper.code.ROLE_NOT_EXIST_MESSAGE)
                 # 角色被禁用
                 if role['status'] == 2:
-                    return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED, message=helper.code.ROLE_DISABLED_MESSAGE)
+                    return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED,
+                                                     message=helper.code.ROLE_DISABLED_MESSAGE)
                 # 如果用户不是超级管理员
                 if role['id'] != 1:
                     if not (request.url.path in json.loads(role['auth_api'])):
-                        return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED, message=helper.code.FORBIDDEN_MESSAGE)
+                        return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED,
+                                                         message=helper.code.FORBIDDEN_MESSAGE)
 
         # process the request and get the response
         response = await call_next(request)

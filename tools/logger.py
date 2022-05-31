@@ -6,9 +6,12 @@ import time
 
 LOG_FILENAME = "./logs/{}.log".format(time.strftime("%Y%m%d", time.localtime()))
 logger = logging.getLogger()
-'''
-日志模块
-'''
+
+"""
+todo：日志模块
+tools.logger 
+def set_logger() -> None
+"""
 
 
 def set_logger():

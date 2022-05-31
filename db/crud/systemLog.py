@@ -2,29 +2,40 @@
 
 
 from db.alchemyConnection import Session
-from db.models import Log
+from db.models import Log, to_json
 from tools.logger import logger
 
 session = Session()
 
+"""
+todo: 获取日志列表
+Parameter page, limit, filters of db.crud.systemLog.lists
+(page: {__sub__},limit: {__mul__},filters: Any = None) -> Coroutine[Any, Any, Optional[Dict[str, List[dict]]]]
+"""
 
-# 获取日志列表
+
 async def lists(page, limit, filters=None):
     try:
         if filters is None:
             filters = []
-        items = session.query(Log).filter(*filters).limit(limit).offset(limit * (page - 1)).to_json()
+        data = session.query(Log).filter(*filters).limit(limit).offset(limit * (page - 1))
         total = session.query(Log).filter(*filters).count()
         result = []
-        for comment in items:
-            result.append(comment.to_json())
+        for column in data:
+            result.append(to_json(column))
         return {'items': result, 'total': total}
     except Exception as e:
         logger.error('get_log_lists message：{}'.format(e))
         return None
 
 
-# 保存系统日志
+"""
+todo：保存系统日志
+Parameter params of db.crud.systemLog.save 
+params: {__getitem__}
+"""
+
+
 def save(params):
     try:
         log = Log(
@@ -44,7 +55,13 @@ def save(params):
         return None
 
 
-# 删除日志
+"""
+todo：删除日志
+Parameter filters of db.crud.systemLog.delete
+(filters: Any = None) -> Optional[bool]
+"""
+
+
 def delete(filters=None):
     try:
         if filters is None:

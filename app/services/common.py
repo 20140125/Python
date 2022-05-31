@@ -10,11 +10,17 @@ ERR_MSG = MiddlewareMessage()
 
 config = Settings()
 
+"""
+todo：生成验证码
+Parameter request of app.services.common.captcha
+request: {url, headers, client}
+return JSONResponse
+"""
 
-# 生成验证码
+
 async def captcha(request):
     # 生成随机数
     num = random.randint(100000, 999999)
     # 保存到REDIS
     await redisClient.set_ex(num, config.set_redis_timeout, num)
-    return await helper.jsonResponse(lists={'captcha': num}, request=request)
+    return await helper.jsonResponse(request, lists={'captcha': num})

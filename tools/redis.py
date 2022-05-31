@@ -5,9 +5,9 @@ import redis
 from config.app import Settings
 from tools.logger import logger
 
-'''
+"""
 Redis模块
-'''
+"""
 
 
 class Redis:

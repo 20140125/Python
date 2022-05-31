@@ -1,16 +1,23 @@
 #!/usr/bin/python3
 
-from db.crud import systemLog
 import json
 import time
 
+from db.crud import systemLog
+from db.models import Log
 from tools import helper
 from tools.logger import logger
 from tools.redis import redisClient
-from db.models import Log
+
+"""
+todo：获取日志列表
+Parameter pagination, request of app.services.v1.systemLog.lists 
+pagination: {page, limit}
+request: {url, headers, client}
+return JSONResponse
+"""
 
 
-# 获取日志列表
 async def lists(pagination, request):
     try:
         result = systemLog.lists(page=pagination.page, limit=pagination.limit)
@@ -22,17 +29,33 @@ async def lists(pagination, request):
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 
 
-# 删除日志
+"""
+todo：删除日志
+Parameter params, request of app.services.v1.systemLog.remove 
+params: {id}
+request: {url, headers, client}
+return JSONResponse
+"""
+
+
 async def remove(params, request):
     try:
         if systemLog.delete([Log.id == params.id]):
-            return await helper.jsonResponse(request, lists={'id': params.id}, message='remove system log successfully')
-        return await helper.jsonResponse(request, lists={'id': params.id}, message='remove system log failed', status=helper.code.ERROR)
+            return await helper.jsonResponse(request, lists={'id': params.id})
+        return await helper.jsonResponse(request, lists={'id': params.id}, status=helper.code.ERROR)
     except Exception as e:
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 
 
-# 保存日志
+"""
+todo：保存日志
+Parameter params, request of app.services.v1.systemLog.save 
+params: {__getitem__},
+request: {headers, url, client}
+return Optional[int]
+"""
+
+
 async def save(params, request):
     try:
         request_params = params['lists']
@@ -57,4 +80,3 @@ async def save(params, request):
         return systemLog.save(log)
     except Exception as e:
         logger.error('save log error: {}'.format(e))
-

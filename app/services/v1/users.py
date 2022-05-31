@@ -1,17 +1,25 @@
 #!/usr/bin/python3
 
 import json
-from datetime import datetime
+import random
 from hashlib import md5
 from secrets import compare_digest
 
 from db import models
-from tools import helper
 from db.crud import role, users
+from tools import helper
+from tools.logger import logger
 from tools.redis import redisClient
 
+"""
+todo：用户登录系统
+Parameter params, request of app.services.v1.users.login 
+params: {captcha, email, password}
+request: {url, headers, client}
+return JSONResponse
+"""
 
-# 用户登录系统
+
 async def login(params, request):
     try:
         # 验证验证码是否正确
@@ -53,7 +61,15 @@ async def login(params, request):
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 
 
-# 获取用户列表
+"""
+todo：获取用户列表
+Parameter params, request of app.services.v1.users.logout
+params: {page, limit}
+request: {url, headers, client}
+return JSONResponse
+"""
+
+
 async def lists(params, request):
     try:
         result = users.lists(page=params.page, limit=params.limit)
@@ -62,7 +78,15 @@ async def lists(params, request):
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 
 
-# 登出系统
+"""
+todo：登出系统
+Parameter params, request of app.services.v1.users.logout
+params: {token}
+request: {url, headers, client}
+return JSONResponse
+"""
+
+
 async def logout(params, request):
     try:
         result = users.get([models.Users.remember_token == params.token])
@@ -75,7 +99,68 @@ async def logout(params, request):
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 
 
-# 注册用户
+"""
+todo: 注册用户
+Parameter params, request of app.services.v1.users.register
+params: {email, captcha}
+request: {url, headers, client}
+return JSONResponse
+"""
+
+
 async def register(params, request):
     result = users.get([models.Users.email == 'loveqin0125@foxmail.com'])
+    print(await get_avatar_url())
     return await helper.jsonResponse(request, lists=result)
+
+
+"""
+todo: 获取随机用户图片
+return Optional[Any]
+"""
+
+
+async def get_avatar_url():
+    try:
+        cache_user = await get_cache_users()
+        cache = []
+        for k in cache_user:
+            if k['username'] != 'admin':
+                cache.append(k['avatar_url'])
+        return cache[random.randint(0, len(cache))]
+    except Exception as e:
+        logger.error('get_avatar_url error message: {}'.format(e))
+        return None
+
+
+"""
+todo: 获取缓存用户信息
+return Optional[Any]
+"""
+
+
+async def get_cache_users():
+    try:
+        user = await redisClient.s_members(helper.settings.users_cache_key)
+        cache_user = None
+        for i in user:
+            cache_user = json.loads(i)
+        return cache_user
+    except Exception as e:
+        logger.error('get_cache_users error message: {}'.format(e))
+        return None
+
+
+"""
+todo: 设置缓存用户信息
+return None
+"""
+
+
+async def set_cache_users():
+    try:
+        user = users.all_users()
+        await redisClient.s_add(helper.settings.users_cache_key, json.dumps(user, ensure_ascii=True))
+    except Exception as e:
+        logger.error('set_cache_users error message: {}'.format(e))
+        return None

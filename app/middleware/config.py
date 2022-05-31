@@ -2,6 +2,12 @@
 
 from pydantic import BaseSettings
 
+"""
+todo：错误信息配置
+app.middleware.config
+class MiddlewareMessage(BaseSettings)
+"""
+
 
 class MiddlewareMessage(BaseSettings):
     # 请求成功

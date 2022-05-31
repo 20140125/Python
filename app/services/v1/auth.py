@@ -1,11 +1,18 @@
 #!/usr/bin/python3
 
-from db.crud import auth
 from db import models
+from db.crud import auth
 from tools import helper
 
+"""
+todo：获取权限列表
+Parameter params of app.services.v1.auth.lists 
+params: {page, limit}
+request: {url, headers, client}
+return JSONResponse
+"""
 
-# 获取权限列表
+
 async def lists(params, request):
     try:
         item = auth.lists(params.page, params.limit)
@@ -14,7 +21,15 @@ async def lists(params, request):
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 
 
-# 保存权限
+"""
+todo：保存权限
+Parameter params， request of app.services.v1.auth.save
+params: {id, api, href, name, status, pid, path, level}
+request: {url, headers, client}
+return JSONResponse
+"""
+
+
 async def save(params, request):
     try:
         params.id = auth.save(params)

@@ -15,8 +15,17 @@ code = MiddlewareMessage()
 # 获取配置信息
 settings = Settings()
 
+"""
+todo：返回JSON字符串
+Parameter request, message, lists, status of tools.helper.jsonResponse
+request: {url, headers, client}
+message: str
+lists: Any
+status: int
+return JSONResponse
+"""
 
-# 返回JSON字符串
+
 async def jsonResponse(request, message='successfully', lists=None, status=code.SUCCESS):
     try:
         if lists is None:
@@ -37,7 +46,14 @@ async def jsonResponse(request, message='successfully', lists=None, status=code.
         logger.info('error message： {}'.format(e))
 
 
-# 生成token
+"""
+todo： 生成token
+Parameter data of tools.helper.create_access_token
+data: dict
+return str
+"""
+
+
 async def create_access_token(data: dict):
     to_encode = data.copy()
     # token失效时限

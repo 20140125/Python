@@ -7,6 +7,10 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 
+def to_json(this):
+    return {c.name: getattr(this, c.name, None) for c in this.__table__.columns}
+
+
 # 权限
 class Auth(Base):
     __tablename__ = 'os_auth'
@@ -18,9 +22,6 @@ class Auth(Base):
     path = Column(String(length=255))
     level = Column(Integer)
     status = Column(Integer)
-
-    def to_json(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
 
 
 # 角色
@@ -34,9 +35,6 @@ class Role(Base):
     created_at = Column(Integer)
     updated_at = Column(Integer)
 
-    def to_json(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
-
 
 # 日志
 class Log(Base):
@@ -49,9 +47,6 @@ class Log(Base):
     created_at = Column(Integer)
     day = Column(String(length=16))
     local = Column(String(length=128))
-
-    def to_json(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
 
 
 # 用户
@@ -72,7 +67,3 @@ class Users(Base):
     avatar_url = Column(String(length=512))
     uuid = Column(String(length=128))
     char = Column(String(length=1))
-
-    def to_json(self):
-        print(self)
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
