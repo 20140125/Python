@@ -89,9 +89,9 @@ return Optional[bool]
 """
 
 
-def update(user):
+def update(user, filters):
     try:
-        item = session.query(models.Users).filter(models.Users.id == user.id).first()
+        item = session.query(models.Users).filter(*filters).first()
         item.uuid = user.uuid + '{}'.format(user.id)
         item.updated_at = int(time.time()),
         if 'status' in user:

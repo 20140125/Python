@@ -7,10 +7,11 @@ from hashlib import md5
 from secrets import compare_digest
 
 from db import models
-from db.crud import role, users
+from db.crud import role, users, userCenter
 from tools import helper
 from tools.logger import logger
 from tools.redis import redisClient
+from pypinyin import lazy_pinyin, Style
 
 """
 todo：用户登录系统
@@ -64,16 +65,16 @@ async def login(params, request):
 
 """
 todo：获取用户列表
-Parameter params, request of app.services.v1.users.logout
-params: {page, limit}
+Parameter pagination, request of app.services.v1.users.logout
+pagination: {page, limit}
 request: {url, headers, client}
 return JSONResponse
 """
 
 
-async def lists(params, request):
+async def lists(pagination, request):
     try:
-        result = users.lists(page=params.page, limit=params.limit)
+        result = users.lists(page=pagination.page, limit=pagination.limit)
         return await helper.jsonResponse(request, lists=result)
     except Exception as e:
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
@@ -114,9 +115,31 @@ async def register(params, request):
         # 验证验证码是否正确
         if await redisClient.get_value(params.captcha) is None:
             return await helper.jsonResponse(request, message='verify code not found', status=helper.code.ERROR)
+        # 如果用户存在直接放回用户信息且更新用户信息
         salt = await helper.set_random_str()
         token = await helper.create_access_token({'authentication': '{}{}'.format(params.email, str(time.time()))})
-        password = md5((md5(helper.settings.default_password.encode('utf-8')).hexdigest() + salt).encode('utf-8')).hexdigest()
+        password = md5(
+            (md5(helper.settings.default_password.encode('utf-8')).hexdigest() + salt).encode('utf-8')).hexdigest()
+        user = users.get([models.Users.email == params.email])
+        if user is not None:
+            user['salt'] = salt
+            user['remember_token'] = token
+            user['password'] = password
+            users.update(models.Users(
+                updated_at=int(time.time()),
+                salt=user['salt'],
+                password=user['password'],
+                remember_token=user['remember_token'],
+                ip_address=request.client.host,
+                char=lazy_pinyin(await helper.get_random_name(), style=Style.FIRST_LETTER)[0].upper()
+            ), [models.Users.id == user['id']])
+            # 验证通过删除验证码
+            await redisClient.delete_value(params.captcha)
+            # 保存用户个人中心信息
+            userCenter.update(models.UsersCenter(token=user['remember_token']), [models.UsersCenter.uid == user['id']])
+            return await helper.jsonResponse(request, lists=user)
+        # 注册用户信息
+        username = await helper.get_random_name()
         user = models.Users(
             avatar_url=await get_avatar_url(),
             salt=salt,
@@ -129,14 +152,27 @@ async def register(params, request):
             updated_at=int(time.time()),
             remember_token=token,
             uuid=helper.settings.default_uuid,
-            phone_number=''
+            phone_number='',
+            username=username,
+            char=lazy_pinyin(username, style=Style.FIRST_LETTER)[0].upper()
         )
         user_id = users.save(user)
         if user_id is None:
             return await helper.jsonResponse(request, status=helper.code.ERROR)
-        if users.update({'id': user_id, 'uuid': helper.settings.default_uuid}):
+        if users.update({'uuid': helper.settings.default_uuid}, [models.Users.id == user_id]):
             # 保存用户个人中心信息
-            return await helper.jsonResponse(request, lists=({'id': user_id}))
+            userCenter.save(models.UsersCenter(
+                uid=user_id,
+                token=user['remember_token'],
+                u_name=user['username'],
+                user_status=1,
+                notice_status=1
+            ))
+            # 更新用户图像
+            await set_cache_users()
+            # 验证通过删除验证码
+            await redisClient.delete_value(params.captcha)
+            return await helper.jsonResponse(request, lists=user)
         return await helper.jsonResponse(request, status=helper.code.ERROR)
     except Exception as e:
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
@@ -187,8 +223,17 @@ return None
 
 async def set_cache_users():
     try:
-        user = users.all_users()
-        await redisClient.s_add(helper.settings.users_cache_key, json.dumps(user, ensure_ascii=True))
+        cache_user = []
+        for user in users.all_users():
+            cache_user.append({
+                'client_name': user['username'],
+                'client_img': user['avatar_url'],
+                'uuid': user['uuid'],
+                'id': user['id'],
+                'char': user['char'],
+                'center': userCenter.get([models.UsersCenter.uid == user['id']])
+            })
+        await redisClient.s_add(helper.settings.users_cache_key, json.dumps(cache_user, ensure_ascii=True))
     except Exception as e:
         logger.error('set_cache_users error message: {}'.format(e))
         return None

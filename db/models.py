@@ -67,3 +67,18 @@ class Users(Base):
     avatar_url = Column(String(length=512))
     uuid = Column(String(length=128))
     char = Column(String(length=1))
+
+
+# 个人中心
+class UsersCenter(Base):
+    __tablename__ = 'os_users_center'
+    id = Column(Integer, primary_key=True)
+    uid = Column(Integer, index=True)
+    u_name = Column(String(length=64))
+    tags = Column(String(length=128))
+    local = Column(String(length=64))
+    ip_address = Column(String(length=32))
+    notice_status = Column(Integer)
+    user_status = Column(Integer)
+    desc = Column(String(length=128))
+    token = Column(String(length=1000))

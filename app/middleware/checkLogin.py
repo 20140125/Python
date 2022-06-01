@@ -56,9 +56,9 @@ class checkLogin(BaseHTTPMiddleware):
                     return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED,
                                                      message=helper.code.NOT_LOGIN_MESSAGE)
                 #  请求头必须带上Authentication验证用户合法性
-                if not ('authentication' in request.headers):
-                    return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED,
-                                                     message=helper.code.TOKEN_EMPTY_MESSAGE)
+                # if not ('authentication' in request.headers):
+                #     return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED,
+                #                                      message=helper.code.TOKEN_EMPTY_MESSAGE)
                 # 判断Redis是否有这个用户
                 if await redisClient.get_value(params['token']) is None:
                     return await helper.jsonResponse(request, status=helper.code.UNAUTHORIZED,
