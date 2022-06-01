@@ -1,11 +1,10 @@
 #!/usr/bin/python3
 import time
 
-from db.alchemyConnection import Session
+from db.alchemyConnection import db
 from db import models
 from tools.logger import logger
 
-session = Session()
 
 """
 todo：获取单个用户
@@ -18,7 +17,7 @@ def get(filters=None):
     try:
         if filters is None:
             filters = []
-        return models.to_json(session.query(models.Users).filter(*filters).first())
+        return models.to_json(db.query(models.Users).filter(*filters).first())
     except Exception as e:
         logger.error('get_user message：{}'.format(e))
         return None
@@ -35,8 +34,8 @@ def lists(page, limit, filters=None):
     try:
         if filters is None:
             filters = []
-        data = session.query(models.Users).filter(*filters).limit(limit).offset(limit * (page - 1))
-        total = session.query(models.Users).filter(*filters).count()
+        data = db.query(models.Users).filter(*filters).limit(limit).offset(limit * (page - 1))
+        total = db.query(models.Users).filter(*filters).count()
         result = []
         for column in data:
             result.append(models.to_json(column))
@@ -53,7 +52,7 @@ todo：获取所有用户
 
 def all_users():
     try:
-        data = session.query(models.Users).all()
+        data = db.query(models.Users).all()
         result = []
         for column in data:
             result.append(models.to_json(column))
@@ -72,9 +71,9 @@ user: db.models.Users
 
 def save(user):
     try:
-        session.add(user)
-        session.commit()
-        session.refresh(user)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
         return user.id
     except Exception as e:
         logger.error('save_user message：{}'.format(e))
@@ -91,7 +90,7 @@ return Optional[bool]
 
 def update(user, filters):
     try:
-        item = session.query(models.Users).filter(*filters).first()
+        item = db.query(models.Users).filter(*filters).first()
         item.updated_at = int(time.time())
         if 'uuid' in user.__dict__:
             item.uuid = '{}{}'.format(user.uuid, item.id)
@@ -111,7 +110,7 @@ def update(user, filters):
             item.role_id = user.role_id
         if 'phone_number' in user.__dict__:
             item.phone_number = user.phone_number
-        session.commit()
+        db.commit()
         return True
     except Exception as e:
         logger.error('update_user message：{}'.format(e))

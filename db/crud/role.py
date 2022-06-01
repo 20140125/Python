@@ -1,11 +1,9 @@
 #!/usr/bin/python3
 
 
-from db.alchemyConnection import Session
+from db.alchemyConnection import db
 from db import models
 from tools.logger import logger
-
-session = Session()
 
 """
 todo: 获取角色
@@ -18,7 +16,7 @@ def get(filters=None):
     try:
         if filters is None:
             filters = []
-        return models.to_json(session.query(models.Role).filter(*filters).first())
+        return models.to_json(db.query(models.Role).filter(*filters).first())
     except Exception as e:
         logger.error('get_one_role message：{}'.format(e))
         return None
@@ -35,8 +33,8 @@ def lists(page, limit, filters=None):
     try:
         if filters is None:
             filters = []
-        data = session.query(models.Role).filter(*filters).limit(limit).offset(limit * (page - 1))
-        total = session.query(models.Role).filter(*filters).count()
+        data = db.query(models.Role).filter(*filters).limit(limit).offset(limit * (page - 1))
+        total = db.query(models.Role).filter(*filters).count()
         result = []
         for column in data:
             result.append(models.to_json(column))

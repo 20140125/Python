@@ -4,6 +4,8 @@ from sqlalchemy import Column, Integer, String, Text
 from sqlalchemy.ext.declarative import declarative_base
 
 # 声明基类
+from config.app import settings
+
 Base = declarative_base()
 
 
@@ -18,10 +20,10 @@ class Auth(Base):
     name = Column(String(length=255))
     href = Column(String(length=255))
     api = Column(String(length=255))
-    pid = Column(Integer, index=True)
+    pid = Column(Integer, index=True, default=0)
     path = Column(String(length=255))
-    level = Column(Integer)
-    status = Column(Integer)
+    level = Column(Integer, default=1)
+    status = Column(Integer, default=1)
 
 
 # 角色
@@ -55,9 +57,9 @@ class Users(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String(length=64))
     email = Column(String(length=32))
-    role_id = Column(Integer())
+    role_id = Column(Integer(), default=2)
     ip_address = Column(String(length=32))
-    status = Column(Integer())
+    status = Column(Integer(), default=1)
     created_at = Column(Integer())
     updated_at = Column(Integer())
     password = Column(String(length=32))
@@ -65,7 +67,7 @@ class Users(Base):
     remember_token = Column(String(length=1000))
     phone_number = Column(String(length=11))
     avatar_url = Column(String(length=512))
-    uuid = Column(String(length=128))
+    uuid = Column(String(length=128), default=settings.default_uuid)
     char = Column(String(length=1))
 
 

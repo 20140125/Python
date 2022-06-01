@@ -24,7 +24,8 @@ async def lists(pagination, request):
         result = systemLog.lists(page=pagination.page, limit=pagination.limit)
         if result['items'] is not None:
             for item in result['items']:
-                item['log'] = json.loads(item['log'])
+                if await helper.is_json_string(item['log']):
+                    item['log'] = json.loads(item['log'])
         return await helper.jsonResponse(request, lists=result)
     except Exception as e:
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
@@ -73,7 +74,7 @@ async def save(params, request):
             log=json.dumps({
                 'message': params['message'],
                 'request_params': request_params,
-                'response_params': params
+                'response_params': params['lists']
             }, ensure_ascii=True),
             created_at=int(time.time()),
             day=time.strftime("%Y%m%d", time.localtime())

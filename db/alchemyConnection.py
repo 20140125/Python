@@ -1,9 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from config.app import Settings
+from config.app import settings
 
-settings = Settings()
 debug = settings.db_debug
 # 创建数据库引擎
 engine = create_engine('mysql+pymysql://{username}:{password}@{host}/{database}'.format(
@@ -15,4 +14,6 @@ engine = create_engine('mysql+pymysql://{username}:{password}@{host}/{database}'
     echo=debug
 )
 # 创建数据库会话
-Session = sessionmaker(bind=engine)
+session = sessionmaker(bind=engine)
+
+db = session()

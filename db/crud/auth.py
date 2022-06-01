@@ -1,11 +1,9 @@
 #!/usr/bin/python3
 
 
-from db.alchemyConnection import Session
+from db.alchemyConnection import db
 from db import models
 from tools.logger import logger
-
-session = Session()
 
 """
 todo: 获取单个权限
@@ -18,7 +16,7 @@ def get(filters=None):
     try:
         if filters is None:
             filters = []
-        auth = session.query(models.Auth).filter(*filters).first()
+        auth = db.query(models.Auth).filter(*filters).first()
         return models.to_json(auth)
     except Exception as e:
         logger.error('get_one_auth message：{}'.format(e))
@@ -36,8 +34,8 @@ def lists(page, limit, filters=None):
     try:
         if filters is None:
             filters = []
-        data = session.query(models.Auth).filter(*filters).limit(limit).offset(limit * (page - 1))
-        total = session.query(models.Auth).filter(*filters).count()
+        data = db.query(models.Auth).filter(*filters).limit(limit).offset(limit * (page - 1))
+        total = db.query(models.Auth).filter(*filters).count()
         result = []
         for column in data:
             result.append(models.to_json(column))
@@ -56,9 +54,9 @@ params: {api, href, name, status, pid}
 
 def save(auth):
     try:
-        session.add(auth)
-        session.commit()
-        session.refresh(auth)
+        db.add(auth)
+        db.commit()
+        db.refresh(auth)
         return auth.id
     except Exception as e:
         logger.error('save_auth message：{}'.format(e))
@@ -74,7 +72,7 @@ params: {id, path, pid, name, href, status, level, api}
 
 def update(params):
     try:
-        item = session.query(models.Auth).filter(models.Auth.id == params.id).first()
+        item = db.query(models.Auth).filter(models.Auth.id == params.id).first()
         if 'path' in params.__dict__:
             item.path = params.path
         if 'path' in params.__dict__:
@@ -91,7 +89,7 @@ def update(params):
             item.level = params.level
         if 'api' in params.__dict__:
             item.api = params.api
-        session.commit()
+        db.commit()
         return True
     except Exception as e:
         logger.error('update_auth message：{}'.format(e))

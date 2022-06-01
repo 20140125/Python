@@ -1,11 +1,9 @@
 #!/usr/bin/python3
 
 
-from db.alchemyConnection import Session
+from db.alchemyConnection import db
 from db import models
 from tools.logger import logger
-
-session = Session()
 
 """
 todo: 获取日志列表
@@ -14,12 +12,12 @@ Parameter page, limit, filters of db.crud.systemLog.lists
 """
 
 
-async def lists(page, limit, filters=None):
+def lists(page, limit, filters=None):
     try:
         if filters is None:
             filters = []
-        data = session.query(models.Log).filter(*filters).limit(limit).offset(limit * (page - 1))
-        total = session.query(models.Log).filter(*filters).count()
+        data = db.query(models.Log).filter(*filters).order_by(models.Log.id.desc()).limit(limit).offset(limit * (page - 1))
+        total = db.query(models.Log).filter(*filters).count()
         result = []
         for column in data:
             result.append(models.to_json(column))
@@ -38,9 +36,9 @@ params: {__getitem__}
 
 def save(log):
     try:
-        session.add(log)
-        session.commit()
-        session.refresh(log)
+        db.add(log)
+        db.commit()
+        db.refresh(log)
         return log.id
     except Exception as e:
         logger.error('insert_log message：{}'.format(e))
@@ -58,8 +56,8 @@ def delete(filters=None):
     try:
         if filters is None:
             filters = []
-        session.query(models.Log).filter(*filters).delete()
-        session.commit()
+        db.query(models.Log).filter(*filters).delete()
+        db.commit()
         return True
     except Exception as e:
         logger.error('delete_log message：{}'.format(e))

@@ -3,19 +3,14 @@ import random
 from datetime import datetime, timedelta
 import jwt
 
-from config.app import Settings
+from config.app import settings
 import json
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from app.middleware.config import MiddlewareMessage
+from app.middleware.config import middlewareMessage as code
 from app.services.v1 import systemLog
 from tools.logger import logger
-
-# 错误码信息
-code = MiddlewareMessage()
-# 获取配置信息
-settings = Settings()
 
 """
 todo：返回JSON字符串
@@ -96,6 +91,21 @@ async def set_random_str(length=6, name='default'):
         return ''.join(str(x) for x in string)
     except Exception as e:
         logger.info('set_random_str message： {}'.format(e))
+
+
+"""
+todo:判断是否是json字符串
+Parameter value of tools.helper.is_json_string
+value: Any
+"""
+
+
+async def is_json_string(value):
+    try:
+        json.loads(value)
+        return True
+    except ValueError:
+        return False
 
 
 """
