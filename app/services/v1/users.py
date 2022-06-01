@@ -41,17 +41,9 @@ async def login(params, request):
                 status=helper.code.ERROR
             )
         # 保存用户TOKEN数据在Redis
-        await redisClient.set_ex(
-            result['remember_token'],
-            helper.settings.app_refresh_login_time,
-            result['remember_token'].upper()
-        )
+        await save_remember_token_to_redis(result['remember_token'], result['remember_token'].upper())
         # 保存用户名
-        await redisClient.set_ex(
-            result['remember_token'].upper(),
-            helper.settings.app_refresh_login_time,
-            result['username']
-        )
+        await save_remember_token_to_redis(result['remember_token'].upper(), result['username'])
         # 获取角色权限
         item = role.get([models.Role.id == result['role_id']])
         result['auth_api'] = json.loads(item['auth_api'])
@@ -116,7 +108,7 @@ async def register(params, request):
         if await redisClient.get_value(params.captcha) is None:
             return await helper.jsonResponse(request, message='verify code not found', status=helper.code.ERROR)
         # 如果用户存在直接放回用户信息且更新用户信息
-        salt = await helper.set_random_str()
+        salt = await helper.set_random_str(length=8)
         token = await helper.create_access_token({'authentication': '{}{}'.format(params.email, str(time.time()))})
         password = md5(
             (md5(helper.settings.default_password.encode('utf-8')).hexdigest() + salt).encode('utf-8')).hexdigest()
@@ -137,6 +129,10 @@ async def register(params, request):
             await redisClient.delete_value(params.captcha)
             # 保存用户个人中心信息
             userCenter.update(models.UsersCenter(token=user['remember_token']), [models.UsersCenter.uid == user['id']])
+            # 保存用户TOKEN数据在Redis
+            await save_remember_token_to_redis(user['remember_token'], user['remember_token'].upper())
+            # 保存用户名
+            await save_remember_token_to_redis(user['remember_token'].upper(), user['username'])
             return await helper.jsonResponse(request, lists=user)
         # 注册用户信息
         username = await helper.get_random_name()
@@ -159,20 +155,19 @@ async def register(params, request):
         user_id = users.save(user)
         if user_id is None:
             return await helper.jsonResponse(request, status=helper.code.ERROR)
-        if users.update({'uuid': helper.settings.default_uuid}, [models.Users.id == user_id]):
-            # 保存用户个人中心信息
-            userCenter.save(models.UsersCenter(
-                uid=user_id,
-                token=user['remember_token'],
-                u_name=user['username'],
-                user_status=1,
-                notice_status=1
-            ))
-            # 更新用户图像
-            await set_cache_users()
-            # 验证通过删除验证码
-            await redisClient.delete_value(params.captcha)
-            return await helper.jsonResponse(request, lists=user)
+        # 保存用户个人中心信息
+        userCenter.save(models.UsersCenter(uid=user_id, token=user.remember_token, u_name=user.username))
+        # 更新用户图像
+        await set_cache_users()
+        # 验证通过删除验证码
+        await redisClient.delete_value(params.captcha)
+        # 保存用户TOKEN数据在Redis
+        await save_remember_token_to_redis(token, token.upper())
+        # 保存用户名
+        await save_remember_token_to_redis(token.upper(), username)
+        # 判断用户信息是否更新成功
+        if users.update(models.Users(uuid=helper.settings.default_uuid), [models.Users.id == user_id]):
+            return await helper.jsonResponse(request, lists=models.to_json(user))
         return await helper.jsonResponse(request, status=helper.code.ERROR)
     except Exception as e:
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
@@ -189,8 +184,8 @@ async def get_avatar_url():
         cache_user = await get_cache_users()
         cache = []
         for k in cache_user:
-            if k['username'] != 'admin':
-                cache.append(k['avatar_url'])
+            if k['client_name'] != 'admin':
+                cache.append(k['client_img'])
         return cache[random.randint(0, len(cache))]
     except Exception as e:
         logger.error('get_avatar_url error message: {}'.format(e))
@@ -237,3 +232,9 @@ async def set_cache_users():
     except Exception as e:
         logger.error('set_cache_users error message: {}'.format(e))
         return None
+
+
+# 保存数据至Redis
+async def save_remember_token_to_redis(key, value):
+    # 保存用户名
+    await redisClient.set_ex(key, helper.settings.app_refresh_login_time, value)

@@ -52,21 +52,21 @@ return Optional[bool]
 def update(userCenter, filters):
     try:
         item = session.query(models.UsersCenter).filter(*filters).first()
-        if 'u_name' in userCenter:
+        if 'u_name' in userCenter.__dict__:
             item.u_name = userCenter.u_name
-        if 'tags' in userCenter:
+        if 'tags' in userCenter.__dict__:
             item.u_tags = userCenter.tags
-        if 'local' in userCenter:
+        if 'local' in userCenter.__dict__:
             item.local = userCenter.local
-        if 'ip_address' in userCenter:
+        if 'ip_address' in userCenter.__dict__:
             item.ip_address = userCenter.ip_address
-        if 'user_status' in userCenter:
+        if 'user_status' in userCenter.__dict__:
             item.user_status = userCenter.user_status
-        if 'notice_status' in userCenter:
+        if 'notice_status' in userCenter.__dict__:
             item.notice_status = userCenter.notice_status
-        if 'desc' in userCenter:
+        if 'desc' in userCenter.__dict__:
             item.desc = userCenter.desc
-        if 'token' in userCenter:
+        if 'token' in userCenter.__dict__:
             item.token = userCenter.token
         session.commit()
         return True

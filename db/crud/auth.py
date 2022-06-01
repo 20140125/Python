@@ -75,21 +75,21 @@ params: {id, path, pid, name, href, status, level, api}
 def update(params):
     try:
         item = session.query(models.Auth).filter(models.Auth.id == params.id).first()
-        if 'path' in params:
+        if 'path' in params.__dict__:
             item.path = params.path
-        if 'path' in params:
+        if 'path' in params.__dict__:
             item.id = params.id
-        if 'pid' in params:
+        if 'pid' in params.__dict__:
             item.pid = params.pid
-        if 'name' in params:
+        if 'name' in params.__dict__:
             item.name = params.name
-        if 'href' in params:
+        if 'href' in params.__dict__:
             item.href = params.href
-        if 'status' in params:
+        if 'status' in params.__dict__:
             item.status = params.status
-        if 'level' in params:
+        if 'level' in params.__dict__:
             item.level = params.level
-        if 'api' in params:
+        if 'api' in params.__dict__:
             item.api = params.api
         session.commit()
         return True

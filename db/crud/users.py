@@ -92,26 +92,27 @@ return Optional[bool]
 def update(user, filters):
     try:
         item = session.query(models.Users).filter(*filters).first()
-        item.uuid = user.uuid + '{}'.format(user.id)
-        item.updated_at = int(time.time()),
-        if 'status' in user:
+        item.updated_at = int(time.time())
+        if 'uuid' in user.__dict__:
+            item.uuid = '{}{}'.format(user.uuid, item.id)
+        if 'status' in user.__dict__:
             item.status = user.status
-        if 'username' in user:
+        if 'username' in user.__dict__:
             item.username = user.username
-        if 'password' in user:
+        if 'password' in user.__dict__:
             item.password = user.password
-        if 'remember_token' in user:
+        if 'remember_token' in user.__dict__:
             item.remember_token = user.remember_token
-        if 'salt' in user:
+        if 'salt' in user.__dict__:
             item.salt = user.salt
-        if 'avatar_url' in user:
+        if 'avatar_url' in user.__dict__:
             item.avatar_url = user.avatar_url
-        if 'role_id' in user:
+        if 'role_id' in user.__dict__:
             item.role_id = user.role_id
-        if 'phone_number' in user:
+        if 'phone_number' in user.__dict__:
             item.phone_number = user.phone_number
         session.commit()
         return True
     except Exception as e:
-        logger.error('save_user message：{}'.format(e))
+        logger.error('update_user message：{}'.format(e))
         return None

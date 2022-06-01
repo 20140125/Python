@@ -71,14 +71,14 @@ class Users(Base):
 
 # 个人中心
 class UsersCenter(Base):
-    __tablename__ = 'os_users_center'
+    __tablename__ = 'os_user_center'
     id = Column(Integer, primary_key=True)
     uid = Column(Integer, index=True)
     u_name = Column(String(length=64))
-    tags = Column(String(length=128))
-    local = Column(String(length=64))
-    ip_address = Column(String(length=32))
-    notice_status = Column(Integer)
-    user_status = Column(Integer)
-    desc = Column(String(length=128))
+    tags = Column(String(length=128), default='0')
+    local = Column(String(length=64), default='0')
+    ip_address = Column(String(length=32), default='0')
+    notice_status = Column(Integer, default=1)
+    user_status = Column(Integer, default=1)
+    desc = Column(String(length=128), default='这个家伙很懒，什么也没有留下！')
     token = Column(String(length=1000))
