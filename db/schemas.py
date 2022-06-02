@@ -47,3 +47,9 @@ class logoutModel(BaseModel):
 class registerModel(BaseModel):
     email: EmailStr
     captcha: Union[int] = random.randint(100000, 999999)
+
+
+# 简单搜索模型
+class searchModel(BaseModel):
+    id: Union[int] = 1
+    token: Union[str, None]

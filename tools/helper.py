@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from app.middleware.config import middlewareMessage as code
 from app.services.v1 import systemLog
 from tools.logger import logger
+from tools.redis import redisClient
 
 """
 todo：返回JSON字符串
@@ -106,6 +107,23 @@ async def is_json_string(value):
         return True
     except ValueError:
         return False
+
+
+"""
+todo:保存数据至Redis
+Parameter key, value, timeout of tools.helper.save_remember_token_to_redis
+key: Any
+value: Any
+timeout int
+"""
+
+
+async def save_remember_token_to_redis(key, value, timeout=settings.app_refresh_login_time):
+    try:
+        # 保存用户名
+        await redisClient.set_ex(key, timeout, value)
+    except ValueError:
+        logger.info(ValueError)
 
 
 """
