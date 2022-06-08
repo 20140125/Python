@@ -42,7 +42,7 @@ class Baidu:
             'display': 'dialog',
             'force_login': '0',  # 如传递 'force_login=1'，则加载登录页时强制用户输入用户名和口令，不会从cookie中读取百度用户的登陆状态
             'confirm_login': '1',  # 如传递 'confirm_login=1' 且百度用户已处于登陆状态，会提示是否使用已当前登陆用户对应用授权。
-            'login_type': 'sms'  # /如传递 'login_type=sms'，授权页面会默认使用短信动态密码注册登陆方式。
+            'login_type': 'sms'  # 如传递 'login_type=sms'，授权页面会默认使用短信动态密码注册登陆方式。
         }
         return '{}oauth/2.0/authorize?'.format(self.api_url, urllib.parse.urlencode(params))
 
