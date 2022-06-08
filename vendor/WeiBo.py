@@ -8,7 +8,7 @@ from requests import JSONDecodeError
 from vendor import get_state, helper
 
 """
-Gitee API 授权登录
+WeiBo API 授权登录
 """
 
 
