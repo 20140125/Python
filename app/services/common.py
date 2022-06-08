@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import random
 from tools import helper
+from vendor.WeiBo import WeiBoAuth
 
 
 async def captcha(request):
