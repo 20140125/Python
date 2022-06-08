@@ -4,4 +4,4 @@ SignIn.py
 __pycache__
 venv
 .env
-/test
+test
