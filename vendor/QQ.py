@@ -4,11 +4,10 @@ import urllib.parse
 import requests
 from requests import JSONDecodeError
 
-from tools import helper
-
+from vendor import get_state, helper
 
 """
-QQ授权登录模块
+QQ API 授权登录
 """
 
 
@@ -23,12 +22,11 @@ class QQ:
 
     # 获取授权地址
     async def get_auth_url(self, length=32, scope='get_user_info'):
-        state = await helper.create_access_token({'state': await helper.set_random_str(length)})
         params = {
             'response_type': 'code',
             'client_id': self.appid,
             'redirect_uri': self.redirect_uri,
-            'state': state,
+            'state': await get_state(length),
             'scope': scope,
             'display': ''
         }
