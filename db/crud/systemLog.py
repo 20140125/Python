@@ -38,8 +38,7 @@ def save(log):
     try:
         db.add(log)
         db.commit()
-        db.refresh(log)
-        return log.id
+        return log
     except Exception as e:
         logger.error('insert_log message：{}'.format(e))
         return None

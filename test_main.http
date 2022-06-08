@@ -1,11 +1,38 @@
-# Test your FastAPI endpoints
-
-GET http://127.0.0.1:8000/
+### 获取系统配置
+POST https://www.fanglonger.com/api/v1/oauth/config
+Content-Type: application/json
 Accept: application/json
 
-###
+{
+    "name": "oauth"
+}
 
-GET http://127.0.0.1:8000/hello/User
-Accept: application/json
+### 验证码上报
+POST https://www.fanglonger.com/api/v1/image/hotKeyWord
+Content-Type: application/json
 
-###
+{
+    "verify_code": "123456"
+}
+
+### 登录系统
+POST https://www.fanglonger.com/api/v1/account/login
+Content-Type: application/json
+
+{
+    "email": "loveqin0125@foxmail.com",
+    "password": "123456789",
+    "verify_code": "123456",
+    "loginType": "password"
+}
+
+### 获取图片
+POST https://www.fanglonger.com/api/v1/image/lists
+Content-Type: application/json
+
+{
+    "page": 1,
+    "limit": 10,
+    "source": "mini_program",
+    "token": "eyJpdiI6IjAydnFPOFVBQlVDdTRPZWhnbjQ0bVE9PSIsInZhbHVlIjoiUUlFQWoxY0g1NXlzc01OakpQVytkcFJUN1lKUk1OUlRObzk1R3FBMER3QSt2YW9rbTRqZGFQRjgrOUI3YzBDNmtwVGJZdnJTWHJVaEdkNDY1T0lDcm9jeTZkenVVRWVLclczbXFJR1JoR009IiwibWFjIjoiZTBhNDVhMDQ2N2UxMTkxNTVmNTFmNGU5MGMwZDU2ZGY3YzNjOTE2NThhMmZhN2UzYzM0ZmQyMDg3YjZlODVkNCIsInRhZyI6IiJ9"
+}

@@ -30,14 +30,14 @@ async def jsonResponse(request, message='successfully', lists=None, status=code.
             lists = []
         if status == code.ERROR and message == 'successfully':
             message = 'failed'
-        data = json.dumps({'message': message, 'code': status, 'lists': lists})
+        data = {'message': message, 'code': status, 'lists': lists}
         item = {
-            'item': json.loads(data),
+            'item': data,
             'status_code': 200,
             'url': str(request.url)
         }
         # 保存系统日志到数据库
-        await systemLog.save(json.loads(data), request)
+        await systemLog.save(data, request)
         # 返回JSON数据
         return JSONResponse(jsonable_encoder(item))
     except Exception as e:
@@ -124,6 +124,21 @@ async def save_remember_token_to_redis(key, value, timeout=settings.app_refresh_
         await redisClient.set_ex(key, timeout, value)
     except ValueError:
         logger.info(ValueError)
+
+
+"""
+todo：数据序列化
+Parameter status, message, lists of tools.helper.json_dumps
+status: int
+message: str
+lists: None
+"""
+
+
+async def json_dumps(status=code.SUCCESS, message='successfully', lists=None):
+    if lists is None:
+        lists = []
+    return json.dumps({'status': status, 'message': message, 'lists': lists})
 
 
 """

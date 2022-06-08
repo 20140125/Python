@@ -135,4 +135,3 @@ class ApiLists(Base):
     response = Column(String(length=1024), default='0')
     response_string = Column(Text, default='0')
     remark = Column(String(length=255), default='0')
-

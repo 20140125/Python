@@ -34,7 +34,7 @@ def lists(page, limit, filters=None):
     try:
         if filters is None:
             filters = []
-        data = db.query(models.Auth).filter(*filters).limit(limit).offset(limit * (page - 1))
+        data = db.query(models.Auth).filter(*filters).order_by(models.Auth.path.desc()).limit(limit).offset(limit * (page - 1))
         total = db.query(models.Auth).filter(*filters).count()
         result = []
         for column in data:
@@ -42,6 +42,23 @@ def lists(page, limit, filters=None):
         return {'items': result, 'total': total}
     except Exception as e:
         logger.error('get_auth_lists message：{}'.format(e))
+        return None
+
+
+"""
+todo：获取所有权限
+"""
+
+
+def all_users():
+    try:
+        data = db.query(models.Auth).order_by(models.Auth.path.desc()).all()
+        result = []
+        for column in data:
+            result.append(models.to_json(column))
+        return result
+    except Exception as e:
+        logger.error('all_users message：{}'.format(e))
         return None
 
 

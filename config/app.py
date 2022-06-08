@@ -11,25 +11,91 @@ class Settings(BaseSettings)
 
 class Settings(BaseSettings):
     # 系统配置
+    app_name: str = ''
+    app_username: str = ''
+    app_email: str = ''
+    app_host: str = ''
     app_refresh_login_time: int = 3600
     set_redis_timeout: int = 600
     users_cache_key: str = ''
     default_uuid: str = ''
     default_password: str = ''
+
     # 数据库配置
     db_host: str = ''
     db_username: str = ''
     db_password: str = ''
     db_database: str = ''
-    db_debug: bool = False
+    db_debug: bool = True
+
     # redis 配置
     redis_host: str = ''
     redis_port: int = 3306
     redis_password: str = ''
+
     # 密钥
     secret_key: str = ''
     access_token_expire_minutes: int = 60
     token_algorithm: str = ''
+
+    # 邮箱
+    mail_driver: str = ''
+    mail_host: str = ''
+    mail_port: int = 465
+    mail_username: str = ''
+    mail_password: str = ''
+    mail_encryption: str = ''
+    mail_from_address: str = ''
+    mail_from_name: str = ''
+
+    # 高德地图
+    a_map_key: str = ''
+
+    # 小程序
+    mini_program_app_key: str = ''
+    mini_program_app_secret: str = ''
+
+    # 公众号
+    cen_key: str = ''
+    cen_app_secret: str = ''
+    encode_as_key: str = ''
+    cen_token: str = ''
+
+    # Github授权登录
+    github_token: str = ''
+    github_appid: str = ''
+    github_app_secret: str = ''
+
+    # 微博授权登录
+    weibo_appid: str = ''
+    weibo_app_secret: str = ''
+
+    # 码云授权登录
+    gitee_appid: str = ''
+    gitee_app_secret: str = ''
+    gitee_access_token: str = ''
+
+    # QQ授权登录
+    qq_appid: str = ''
+    qq_app_secret: str = ''
+
+    # Baidu授权登录
+    baidu_id: str = ''
+    baidu_appid: str = ''
+    baidu_app_secret: str = ''
+
+    # 百度智能云识别
+    baidu_image_id: str = ''
+    baidu_image_appid: str = ''
+    baidu_image_secret: str = ''
+
+    # 阿里云授权登录
+    a_li_yun_appid: str = ''
+    a_li_yun_app_secret: str = ''
+
+    # osChina授权登录
+    os_china_appid: str = ''
+    os_china_app_secret: str = ''
 
     class Config:
         # 设置需要识别的 .env 文件

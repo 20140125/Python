@@ -33,7 +33,7 @@ def lists(page, limit, filters=None):
     try:
         if filters is None:
             filters = []
-        data = db.query(models.Role).filter(*filters).limit(limit).offset(limit * (page - 1))
+        data = db.query(models.Role).filter(*filters).order_by(models.Role.id.desc()).limit(limit).offset(limit * (page - 1))
         total = db.query(models.Role).filter(*filters).count()
         result = []
         for column in data:

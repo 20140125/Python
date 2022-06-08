@@ -34,7 +34,7 @@ def lists(page, limit, filters=None):
     try:
         if filters is None:
             filters = []
-        data = db.query(models.Users).filter(*filters).limit(limit).offset(limit * (page - 1))
+        data = db.query(models.Users).filter(*filters).order_by(models.Users.updated_at.desc()).limit(limit).offset(limit * (page - 1))
         total = db.query(models.Users).filter(*filters).count()
         result = []
         for column in data:
