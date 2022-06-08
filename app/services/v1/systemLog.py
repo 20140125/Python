@@ -10,16 +10,14 @@ from tools import helper
 from tools.logger import logger
 from tools.redis import redisClient
 
-"""
-todo：获取日志列表
-Parameter pagination, request of app.services.v1.systemLog.lists 
-pagination: {page, limit}
-request: {url, headers, client}
-return JSONResponse
-"""
-
 
 async def lists(pagination, request):
+    """
+    todo：获取日志列表
+    :param pagination:
+    :param request:
+    :return JSONResponse:
+    """
     try:
         result = systemLog.lists(page=pagination.page, limit=pagination.limit)
         if result['items'] is not None:
@@ -31,16 +29,13 @@ async def lists(pagination, request):
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 
 
-"""
-todo：删除日志
-Parameter params, request of app.services.v1.systemLog.remove 
-params: {id}
-request: {url, headers, client}
-return JSONResponse
-"""
-
-
 async def remove(params, request):
+    """
+    todo：删除日志
+    :param params:
+    :param request:
+    :return JSONResponse:
+    """
     try:
         if systemLog.delete([Log.id == params.id]):
             return await helper.jsonResponse(request, lists={'id': params.id})
@@ -49,16 +44,13 @@ async def remove(params, request):
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 
 
-"""
-todo：保存日志
-Parameter params, request of app.services.v1.systemLog.save 
-params: {__getitem__},
-request: {headers, url, client}
-return Optional[int]
-"""
-
-
 async def save(params, request):
+    """
+    todo：保存日志
+    :param params:
+    :param request:
+    :return:
+    """
     try:
         request_params = params['lists']
         username = 'tourist'

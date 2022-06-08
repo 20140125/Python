@@ -4,16 +4,14 @@ from db import models
 from db.crud import auth
 from tools import helper
 
-"""
-todo：获取权限列表
-Parameter params of app.services.v1.auth.lists 
-params: {page, limit}
-request: {url, headers, client}
-return JSONResponse
-"""
-
 
 async def lists(params, request):
+    """
+    todo：获取权限列表
+    :param params:
+    :param request:
+    :return JSONResponse:
+    """
     try:
         item = auth.lists(params.page, params.limit)
         return await helper.jsonResponse(request, lists=item)
@@ -21,16 +19,13 @@ async def lists(params, request):
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 
 
-"""
-todo：保存权限
-Parameter params， request of app.services.v1.auth.save
-params: {id, api, href, name, status, pid, path, level}
-request: {url, headers, client}
-return JSONResponse
-"""
-
-
 async def save(params, request):
+    """
+    todo：保存权限
+    :param params:
+    :param request:
+    :return JSONResponse:
+    """
     try:
         auth_model = models.Auth(
             name=params.name,

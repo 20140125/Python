@@ -20,8 +20,13 @@ class Github:
         self.redirect_uri = '{}{}'.format(helper.settings.app_host, redirect_uri)
         self.api_url = 'https://github.com/'
 
-    # 获取授权登录地址
     async def get_auth_url(self, length=32, scope='user:email'):
+        """
+        todo: 获取授权登录地址
+        :param length:
+        :param scope:
+        :return:
+        """
         params = {
             'client_id': self.appid,
             'redirect_uri': self.redirect_uri,
@@ -31,8 +36,13 @@ class Github:
         }
         return '{}login/oauth/authorize?{}'.format(self.api_url, urllib.parse.urlencode(params))
 
-    # 获取access_token
     async def get_access_token(self, code, state):
+        """
+        todo: 获取access_token
+        :param code:
+        :param state:
+        :return:
+        """
         try:
             params = {
                 'client_id': self.appid,
@@ -46,9 +56,13 @@ class Github:
         except JSONDecodeError:
             return {'code': helper.code.ERROR, 'message': 'get_access_token failed'}
 
-    # 获取用户信息
     @staticmethod
     async def get_user_info(access_token):
+        """
+        todo 获取用户信息
+        :param access_token:
+        :return:
+        """
         try:
             headers = {
                 'Authorization': 'token {}'.format(access_token),
@@ -58,9 +72,13 @@ class Github:
         except JSONDecodeError:
             return {'code': helper.code.ERROR, 'message': 'get_user_info failed'}
 
-    # 获取用户信息(包含所有项目)
     @staticmethod
     async def get_user_repos(access_token):
+        """
+        todo: 获取access_token
+        :param access_token:
+        :return:
+        """
         try:
             headers = {
                 'Authorization': 'token {}'.format(access_token),

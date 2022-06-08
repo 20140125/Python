@@ -5,14 +5,13 @@ from db.alchemyConnection import db
 from db import models
 from tools.logger import logger
 
-"""
-todo: 获取角色
-Parameter filters of db.crud.role.get
-(filters: Any = None) -> Optional[dict]
-"""
-
 
 def get(filters=None):
+    """
+     todo: 获取角色
+    :param filters:
+    :return:
+    """
     try:
         if filters is None:
             filters = []
@@ -22,18 +21,19 @@ def get(filters=None):
         return None
 
 
-"""
-todo：获取角色列表
-Parameter page, limit, filters of db.crud.role.get
-(page: {__sub__},limit: {__mul__},filters: Any = None) -> Optional[Dict[str, List[dict]]]
-"""
-
-
 def lists(page, limit, filters=None):
+    """
+    todo：获取角色列表
+    :param page:
+    :param limit:
+    :param filters:
+    :return:
+    """
     try:
         if filters is None:
             filters = []
-        data = db.query(models.Role).filter(*filters).order_by(models.Role.id.desc()).limit(limit).offset(limit * (page - 1))
+        data = db.query(models.Role).filter(*filters).order_by(models.Role.id.desc()).limit(limit).offset(
+            limit * (page - 1))
         total = db.query(models.Role).filter(*filters).count()
         result = []
         for column in data:

@@ -3,15 +3,12 @@ import random
 from tools import helper
 
 
-"""
-todo：生成验证码
-Parameter request of app.services.common.captcha
-request: {url, headers, client}
-return JSONResponse
-"""
-
-
 async def captcha(request):
+    """
+    todo：生成验证码
+    :param request:
+    :return JSONResponse:
+    """
     # 生成随机数
     num = random.randint(100000, 999999)
     # 保存到REDIS

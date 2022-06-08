@@ -5,14 +5,13 @@ from db.alchemyConnection import db
 from db import models
 from tools.logger import logger
 
-"""
-todo: 获取单个权限
-Parameter filters of db.crud.auth def get
-(filters: Any = None) -> Optional[dict]
-"""
-
 
 def get(filters=None):
+    """
+    todo: 获取单个权限
+    :param filters:
+    :return:
+    """
     try:
         if filters is None:
             filters = []
@@ -23,18 +22,19 @@ def get(filters=None):
         return None
 
 
-"""
-todo: 获取权限列表
-Parameter page, limit, filters of db.crud.auth def lists
-(page: {__sub__},limit: {__mul__},filters: Any = None) -> Optional[Dict[str, List[dict]]]
-"""
-
-
 def lists(page, limit, filters=None):
+    """
+    todo: 获取权限列表
+    :param page:
+    :param limit:
+    :param filters:
+    :return:
+    """
     try:
         if filters is None:
             filters = []
-        data = db.query(models.Auth).filter(*filters).order_by(models.Auth.path.desc()).limit(limit).offset(limit * (page - 1))
+        data = db.query(models.Auth).filter(*filters).order_by(models.Auth.path.desc()).limit(limit).offset(
+            limit * (page - 1))
         total = db.query(models.Auth).filter(*filters).count()
         result = []
         for column in data:
@@ -45,12 +45,11 @@ def lists(page, limit, filters=None):
         return None
 
 
-"""
-todo：获取所有权限
-"""
-
-
 def all_users():
+    """
+    todo：获取所有权限
+    :return:
+    """
     try:
         data = db.query(models.Auth).order_by(models.Auth.path.desc()).all()
         result = []
@@ -62,14 +61,12 @@ def all_users():
         return None
 
 
-"""
-todo: 保存权限
-Parameter params of db.crud.auth.save 
-params: {api, href, name, status, pid}
-"""
-
-
 def save(auth):
+    """
+    todo: 保存权限
+    :param auth:
+    :return:
+    """
     try:
         db.add(auth)
         db.commit()
@@ -80,14 +77,12 @@ def save(auth):
         return None
 
 
-"""
-todo: 保存数据
-Parameter params of db.crud.auth.update 
-params: {id, path, pid, name, href, status, level, api}
-"""
-
-
 def update(params):
+    """
+    todo: 更新权限
+    :param params:
+    :return:
+    """
     try:
         item = db.query(models.Auth).filter(models.Auth.id == params.id).first()
         if 'path' in params.__dict__:

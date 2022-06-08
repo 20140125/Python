@@ -20,8 +20,13 @@ class QQ:
         self.redirect_uri = '{}{}'.format(helper.settings.app_host, redirect_uri)
         self.api_url = 'https://graph.qq.com/'
 
-    # 获取授权地址
     async def get_auth_url(self, length=32, scope='get_user_info'):
+        """
+        todo:获取授权地址
+        :param length:
+        :param scope:
+        :return:
+        """
         params = {
             'response_type': 'code',
             'client_id': self.appid,
@@ -32,8 +37,12 @@ class QQ:
         }
         return '{}oauth2.0/authorize?{}'.format(self.api_url, urllib.parse.urlencode(params))
 
-    # 获取access_token
     async def get_access_token(self, code):
+        """
+        todo:获取access_token
+        :param code:
+        :return:
+        """
         try:
             params = {
                 'grant_type': 'authorization_code',
@@ -48,8 +57,12 @@ class QQ:
         except JSONDecodeError:
             return {'code': helper.code.ERROR, 'message': 'get_access_token failed'}
 
-    # 刷新access_token
     async def refresh_access_token(self, refresh_token):
+        """
+        todo：刷新access_token
+        :param refresh_token:
+        :return:
+        """
         try:
             params = {
                 'grant_type': 'refresh_token',
@@ -63,9 +76,12 @@ class QQ:
         except JSONDecodeError:
             return {'code': helper.code.ERROR, 'message': 'get_access_token failed'}
 
-    # 获取openid
-
     async def get_openid(self, access_token):
+        """
+        todo: 获取openid
+        :param access_token:
+        :return:
+        """
         try:
             params = {
                 'access_token': access_token,
@@ -76,8 +92,12 @@ class QQ:
         except JSONDecodeError:
             return {'code': helper.code.ERROR, 'message': 'get_openid failed'}
 
-    # 获取用户信息
     async def get_user_info(self, access_token):
+        """
+        todo:获取用户信息
+        :param access_token:
+        :return:
+        """
         param = await self.get_openid(access_token)
         try:
             params = {

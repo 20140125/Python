@@ -7,29 +7,24 @@ from db import schemas
 
 router = APIRouter()
 
-"""
-todo: 获取权限列表
-Parameter params, request of app.routers.v1.auth.lists
-params: paginationModel
-request: Request
-return JSONResponse
-"""
-
 
 @router.post('/auth/lists')
 async def lists(params: schemas.paginationModel, request: Request):
+    """
+    todo: 获取权限列表
+    :param params:
+    :param request:
+    :return JSONResponse:
+    """
     return await auth.lists(params, request)
-
-
-"""
-todo: 保存权限
-Parameter params, request of app.routers.v1.auth.save
-params: authModel
-request: Request
-return JSONResponse
-"""
 
 
 @router.post('/auth/save')
 async def save(params: schemas.authModel, request: Request):
+    """
+    todo: 保存权限
+    :param params:
+    :param request:
+    :return JSONResponse:
+    """
     return await auth.save(params, request)

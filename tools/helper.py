@@ -13,18 +13,16 @@ from app.services.v1 import systemLog
 from tools.logger import logger
 from tools.redis import redisClient
 
-"""
-todo：返回JSON字符串
-Parameter request, message, lists, status of tools.helper.jsonResponse
-request: {url, headers, client}
-message: str
-lists: Any
-status: int
-return JSONResponse
-"""
-
 
 async def jsonResponse(request, message='successfully', lists=None, status=code.SUCCESS):
+    """
+    todo：返回JSON字符串
+    :param request:
+    :param message:
+    :param lists:
+    :param status:
+    :return JSONResponse:
+    """
     try:
         if lists is None:
             lists = []
@@ -44,15 +42,12 @@ async def jsonResponse(request, message='successfully', lists=None, status=code.
         logger.info('jsonResponse message： {}'.format(e))
 
 
-"""
-todo： 生成token
-Parameter data of tools.helper.create_access_token
-data: dict
-return str
-"""
-
-
 async def create_access_token(data: dict):
+    """
+    todo： 生成token
+    :param data:
+    :return str:
+    """
     try:
         to_encode = data.copy()
         # token失效时限
@@ -67,15 +62,13 @@ async def create_access_token(data: dict):
         logger.info('create_access_token message： {}'.format(e))
 
 
-"""
-todo: 设置随机数
-Parameter length of tools.helper.set_random_str
-length: int
-type: str
-"""
-
-
 async def set_random_str(length=6, name='default'):
+    """
+    todo: 设置随机数
+    :param length:
+    :param name:
+    :return str:
+    """
     try:
         random_str = {
             'number': '0123456789',
@@ -94,14 +87,12 @@ async def set_random_str(length=6, name='default'):
         logger.info('set_random_str message： {}'.format(e))
 
 
-"""
-todo:判断是否是json字符串
-Parameter value of tools.helper.is_json_string
-value: Any
-"""
-
-
 async def is_json_string(value):
+    """
+    todo: todo:判断是否是json字符串
+    :param value:
+    :return bool:
+    """
     try:
         json.loads(value)
         return True
@@ -109,16 +100,14 @@ async def is_json_string(value):
         return False
 
 
-"""
-todo:保存数据至Redis
-Parameter key, value, timeout of tools.helper.save_remember_token_to_redis
-key: Any
-value: Any
-timeout int
-"""
-
-
 async def save_remember_token_to_redis(key, value, timeout=settings.app_refresh_login_time):
+    """
+    todo:保存数据至Redis
+    :param key:
+    :param value:
+    :param timeout:
+    :return:
+    """
     try:
         # 保存用户名
         await redisClient.set_ex(key, timeout, value)
@@ -126,27 +115,11 @@ async def save_remember_token_to_redis(key, value, timeout=settings.app_refresh_
         logger.info(ValueError)
 
 
-"""
-todo：数据序列化
-Parameter status, message, lists of tools.helper.json_dumps
-status: int
-message: str
-lists: None
-"""
-
-
-async def json_dumps(status=code.SUCCESS, message='successfully', lists=None):
-    if lists is None:
-        lists = []
-    return json.dumps({'status': status, 'message': message, 'lists': lists})
-
-
-"""
-todo: 获取用户名称
-"""
-
-
 async def get_random_name():
+    """
+    todo: 获取用户名称
+    :return:
+    """
     random_str = {
         'first_name': ['赵', '钱', '孙', '李', '周', '吴', '郑', '王', '冯', '陈', '褚', '卫', '蒋', '沈', '韩', '杨', '朱', '秦', '尤',
                        '许', '何', '吕', '施', '张', '孔', '曹', '严', '华', '金', '魏', '陶', '姜', '戚', '谢', '邹', '喻', '柏', '水',

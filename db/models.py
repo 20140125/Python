@@ -8,6 +8,11 @@ Base = declarative_base()
 
 
 def to_json(this):
+    """
+    todo: json转换
+    :param this:
+    :return:
+    """
     return {c.name: getattr(this, c.name, None) for c in this.__table__.columns}
 
 

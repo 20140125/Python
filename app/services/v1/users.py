@@ -13,16 +13,14 @@ from tools.logger import logger
 from tools.redis import redisClient
 from pypinyin import lazy_pinyin, Style
 
-"""
-todo：用户登录系统
-Parameter params, request of app.services.v1.users.login 
-params: {captcha, email, password}
-request: {url, headers, client}
-return JSONResponse
-"""
-
 
 async def login(params, request):
+    """
+    todo：用户登录系统
+    :param params:
+    :param request:
+    :return JSONResponse:
+    """
     try:
         # 验证验证码是否正确
         if await redisClient.get_value(params.captcha) is None:
@@ -55,16 +53,13 @@ async def login(params, request):
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 
 
-"""
-todo：获取用户列表
-Parameter pagination, request of app.services.v1.users.logout
-pagination: {page, limit}
-request: {url, headers, client}
-return JSONResponse
-"""
-
-
 async def lists(pagination, request):
+    """
+    todo：获取用户列表
+    :param pagination:
+    :param request:
+    :return JSONResponse:
+    """
     try:
         result = users.lists(page=pagination.page, limit=pagination.limit)
         return await helper.jsonResponse(request, lists=result)
@@ -72,16 +67,13 @@ async def lists(pagination, request):
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 
 
-"""
-todo：登出系统
-Parameter params, request of app.services.v1.users.logout
-params: {token}
-request: {url, headers, client}
-return JSONResponse
-"""
-
-
 async def logout(params, request):
+    """
+    todo：登出系统
+    :param params:
+    :param request:
+    :return JSONResponse:
+    """
     try:
         result = users.get([models.Users.remember_token == params.token])
         if result is None:
@@ -93,16 +85,13 @@ async def logout(params, request):
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 
 
-"""
-todo: 注册用户
-Parameter params, request of app.services.v1.users.register
-params: {email, captcha}
-request: {url, headers, client}
-return JSONResponse
-"""
-
-
 async def register(params, request):
+    """
+    todo: 注册用户
+    :param params:
+    :param request:
+    :return JSONResponse:
+    """
     try:
         # 验证验证码是否正确
         if await redisClient.get_value(params.captcha) is None:
@@ -173,13 +162,11 @@ async def register(params, request):
         return await helper.jsonResponse(request, message='network error {}'.format(e), status=helper.code.NETWORK)
 
 
-"""
-todo: 获取随机用户图片
-return Optional[Any]
-"""
-
-
 async def get_avatar_url():
+    """
+    todo: 获取随机用户图片
+    :return str:
+    """
     try:
         cache_user = await get_cache_users()
         cache = []
@@ -192,13 +179,11 @@ async def get_avatar_url():
         return None
 
 
-"""
-todo: 获取缓存用户信息
-return Optional[Any]
-"""
-
-
 async def get_cache_users():
+    """
+    todo: 获取缓存用户信息
+    :return:
+    """
     try:
         user = await redisClient.s_members(helper.settings.users_cache_key)
         cache_user = None
@@ -210,13 +195,11 @@ async def get_cache_users():
         return None
 
 
-"""
-todo: 设置缓存用户信息
-return None
-"""
-
-
 async def set_cache_users():
+    """
+    todo: 设置缓存用户信息
+    :return:
+    """
     try:
         cache_user = []
         for user in users.all_users():
@@ -233,5 +216,3 @@ async def set_cache_users():
         await redisClient.s_add(helper.settings.users_cache_key, json.dumps(cache_user, ensure_ascii=True))
     except Exception as e:
         logger.error('set_cache_users error message: {}'.format(e))
-        return None
-

@@ -6,14 +6,12 @@ from app.services import common
 
 router = APIRouter()
 
-"""
-todo: 验证码
-Parameter request of app.routers.common.captcha
-request: Request
-return JSONResponse
-"""
-
 
 @router.post('/common/captcha')
 async def captcha(request: Request):
+    """
+    todo: 验证码
+    :param request:
+    :return JSONResponse:
+    """
     return await common.captcha(request)

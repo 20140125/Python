@@ -5,18 +5,20 @@ from db.alchemyConnection import db
 from db import models
 from tools.logger import logger
 
-"""
-todo: 获取日志列表
-Parameter page, limit, filters of db.crud.systemLog.lists
-(page: {__sub__},limit: {__mul__},filters: Any = None) -> Coroutine[Any, Any, Optional[Dict[str, List[dict]]]]
-"""
-
 
 def lists(page, limit, filters=None):
+    """
+    todo: 获取日志列表
+    :param page:
+    :param limit:
+    :param filters:
+    :return:
+    """
     try:
         if filters is None:
             filters = []
-        data = db.query(models.Log).filter(*filters).order_by(models.Log.id.desc()).limit(limit).offset(limit * (page - 1))
+        data = db.query(models.Log).filter(*filters).order_by(models.Log.id.desc()).limit(limit).offset(
+            limit * (page - 1))
         total = db.query(models.Log).filter(*filters).count()
         result = []
         for column in data:
@@ -27,14 +29,12 @@ def lists(page, limit, filters=None):
         return None
 
 
-"""
-todo：保存系统日志
-Parameter params of db.crud.systemLog.save 
-params: {__getitem__}
-"""
-
-
 def save(log):
+    """
+    todo：保存系统日志
+    :param log:
+    :return:
+    """
     try:
         db.add(log)
         db.commit()
@@ -44,14 +44,12 @@ def save(log):
         return None
 
 
-"""
-todo：删除日志
-Parameter filters of db.crud.systemLog.delete
-(filters: Any = None) -> Optional[bool]
-"""
-
-
 def delete(filters=None):
+    """
+    todo：删除日志
+    :param filters:
+    :return:
+    """
     try:
         if filters is None:
             filters = []

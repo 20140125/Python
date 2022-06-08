@@ -4,14 +4,13 @@ from db.alchemyConnection import db
 from db import models
 from tools.logger import logger
 
-"""
-todo：获取单个用户信息
-Parameter filters of db.crud.userCenter.get
-(filters: Any = None) -> Optional[dict]
-"""
-
 
 def get(filters=None):
+    """
+    todo：获取单个用户信息
+    :param filters:
+    :return:
+    """
     try:
         if filters is None:
             filters = []
@@ -21,14 +20,12 @@ def get(filters=None):
         return None
 
 
-"""
-todo：保存用户信息
-Parameter user of db.crud.userCenter.save
-user: db.models.UsersCenter
-"""
-
-
 def save(userCenter):
+    """
+    todo：保存用户信息
+    :param userCenter:
+    :return:
+    """
     try:
         db.add(userCenter)
         db.commit()
@@ -39,15 +36,13 @@ def save(userCenter):
         return None
 
 
-"""
-todo：更新用户信息
-Parameter user of db.crud.userCenter.update
-(user: db.models.UsersCenter)
-return Optional[bool]
-"""
-
-
 def update(userCenter, filters):
+    """
+    todo：更新用户信息
+    :param userCenter:
+    :param filters:
+    :return:
+    """
     try:
         item = db.query(models.UsersCenter).filter(*filters).first()
         if 'u_name' in userCenter.__dict__:

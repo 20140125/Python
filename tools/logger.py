@@ -7,14 +7,12 @@ import time
 LOG_FILENAME = "./logs/{}.log".format(time.strftime("%Y%m%d", time.localtime()))
 logger = logging.getLogger()
 
-"""
-todo：日志模块
-tools.logger 
-def set_logger() -> None
-"""
-
 
 def set_logger():
+    """
+    todo：日志模块
+    :return:
+    """
     logger.setLevel(logging.INFO)
     formatter = logging.Formatter(
         "[%(asctime)s] - %(pathname)s %(levelname)s: %(message)s [Line: %(lineno)d]"

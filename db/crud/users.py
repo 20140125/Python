@@ -6,14 +6,12 @@ from db import models
 from tools.logger import logger
 
 
-"""
-todo：获取单个用户
-Parameter filters of db.crud.users.get
-(filters: Any = None) -> Optional[dict]
-"""
-
-
 def get(filters=None):
+    """
+    todo：获取单个用户
+    :param filters:
+    :return:
+    """
     try:
         if filters is None:
             filters = []
@@ -23,18 +21,19 @@ def get(filters=None):
         return None
 
 
-"""
-todo：获取用户列表
-Parameter page, limit, filters of db.crud.users.lists
-(page: {__sub__}, limit: {__mul__},filters: Any = None) -> Optional[Dict[str, List[dict]]]
-"""
-
-
 def lists(page, limit, filters=None):
+    """
+    todo：获取用户列表
+    :param page:
+    :param limit:
+    :param filters:
+    :return:
+    """
     try:
         if filters is None:
             filters = []
-        data = db.query(models.Users).filter(*filters).order_by(models.Users.updated_at.desc()).limit(limit).offset(limit * (page - 1))
+        data = db.query(models.Users).filter(*filters).order_by(models.Users.updated_at.desc()).limit(limit).offset(
+            limit * (page - 1))
         total = db.query(models.Users).filter(*filters).count()
         result = []
         for column in data:
@@ -45,12 +44,11 @@ def lists(page, limit, filters=None):
         return None
 
 
-"""
-todo：获取所有用户
-"""
-
-
 def all_users():
+    """
+    todo：获取所有用户
+    :return:
+    """
     try:
         data = db.query(models.Users).all()
         result = []
@@ -62,14 +60,12 @@ def all_users():
         return None
 
 
-"""
-todo：保存用户
-Parameter user of db.crud.users.save
-user: db.models.Users
-"""
-
-
 def save(user):
+    """
+    todo：保存用户
+    :param user:
+    :return:
+    """
     try:
         db.add(user)
         db.commit()
@@ -80,15 +76,13 @@ def save(user):
         return None
 
 
-"""
-todo：更新用户
-Parameter user of db.crud.users.update
-(user: db.models.Users)
-return Optional[bool]
-"""
-
-
 def update(user, filters):
+    """
+    todo：更新用户
+    :param user:
+    :param filters:
+    :return:
+    """
     try:
         item = db.query(models.Users).filter(*filters).first()
         item.updated_at = int(time.time())
