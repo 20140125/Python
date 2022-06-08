@@ -1,7 +1,5 @@
-SignIn.py
 *.log
-.idea
-__pycache__
-venv
+/.idea
+/__pycache__
 .env
 /test
