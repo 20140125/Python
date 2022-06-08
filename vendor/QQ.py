@@ -20,7 +20,6 @@ class QQ:
         self.app_secret = app_secret
         self.redirect_uri = '{}{}'.format(helper.settings.app_host, redirect_uri)
         self.api_url = 'https://graph.qq.com/'
-        self.openid = None
 
     # 获取授权地址
     async def get_auth_url(self, length=32, scope='get_user_info'):
@@ -46,7 +45,7 @@ class QQ:
                 'redirect_uri': self.redirect_uri,
                 'fmt': 'json'
             }
-            result = requests.get('oauth2.0/token?{}'.format(self.api_url, urllib.parse.urlencode(params)))
+            result = requests.get('{}oauth2.0/token?{}'.format(self.api_url, urllib.parse.urlencode(params)))
             return result.json()
         except JSONDecodeError:
             return {'code': helper.code.ERROR, 'message': 'get_access_token failed'}
@@ -61,7 +60,7 @@ class QQ:
                 'refresh_token': refresh_token,
                 'fmt': 'json'
             }
-            result = requests.get('oauth2.0/token?{}'.format(self.api_url, urllib.parse.urlencode(params)))
+            result = requests.get('{}oauth2.0/token?{}'.format(self.api_url, urllib.parse.urlencode(params)))
             return result.json()
         except JSONDecodeError:
             return {'code': helper.code.ERROR, 'message': 'get_access_token failed'}
@@ -95,4 +94,4 @@ class QQ:
             return {'code': helper.code.ERROR, 'message': 'get_user_info failed'}
 
 
-QQAuth = QQ(appid=helper.settings.qq_appid, app_secret=helper.settings.qq_app_secret, redirect_uri='api/v1/callback/qq')
+QQAuth = QQ(appid=helper.settings.qq_appid, app_secret=helper.settings.qq_app_secret, redirect_uri=helper.settings.qq_redirect_uri)

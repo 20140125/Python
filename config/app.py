@@ -78,6 +78,7 @@ class Settings(BaseSettings):
     # QQ授权登录
     qq_appid: str = ''
     qq_app_secret: str = ''
+    qq_redirect_uri: str = ''
 
     # Baidu授权登录
     baidu_id: str = ''
