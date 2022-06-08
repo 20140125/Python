@@ -65,15 +65,18 @@ class Settings(BaseSettings):
     github_token: str = ''
     github_appid: str = ''
     github_app_secret: str = ''
+    github_redirect_uri: str = ''
 
     # 微博授权登录
     weibo_appid: str = ''
     weibo_app_secret: str = ''
+    weibo_redirect_uri: str = ''
 
     # 码云授权登录
     gitee_appid: str = ''
     gitee_app_secret: str = ''
     gitee_access_token: str = ''
+    gitee_redirect_uri: str = ''
 
     # QQ授权登录
     qq_appid: str = ''
@@ -84,6 +87,7 @@ class Settings(BaseSettings):
     baidu_id: str = ''
     baidu_appid: str = ''
     baidu_app_secret: str = ''
+    baidu_redirect_uri: str = ''
 
     # 百度智能云识别
     baidu_image_id: str = ''
@@ -97,6 +101,7 @@ class Settings(BaseSettings):
     # osChina授权登录
     os_china_appid: str = ''
     os_china_app_secret: str = ''
+    os_china_redirect_uri: str = ''
 
     class Config:
         # 设置需要识别的 .env 文件
