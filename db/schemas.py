@@ -53,3 +53,16 @@ class registerModel(BaseModel):
 class searchModel(BaseModel):
     id: Union[int] = 1
     token: Union[str, None]
+
+
+# 文件读取
+class fileListsModel(BaseModel):
+    token: Union[str, None]
+    filepath: Union[str] = ''
+
+
+# 文件写入
+class fileWriterModel(BaseModel):
+    token: Union[str, None]
+    filepath: Union[str, None]
+    content: Union[str, None]

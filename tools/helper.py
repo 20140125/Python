@@ -1,7 +1,11 @@
 #!/usr/bin/python3
+import os
 import random
 from datetime import datetime, timedelta
+from hashlib import md5
+
 import jwt
+from filetype import filetype
 
 from config.app import settings
 import json
@@ -31,7 +35,7 @@ async def jsonResponse(request, message='successfully', lists=None, status=code.
         data = {'message': message, 'code': status, 'lists': lists}
         item = {
             'item': data,
-            'status_code': 200,
+            'code': 200,
             'url': str(request.url)
         }
         # 保存系统日志到数据库
@@ -113,6 +117,102 @@ async def save_remember_token_to_redis(key, value, timeout=settings.app_refresh_
         await redisClient.set_ex(key, timeout, value)
     except ValueError:
         logger.info(ValueError)
+
+
+async def get_file_list(filepath):
+    """
+    todo:获取文件列表
+    :param filepath:
+    :return:
+    """
+    try:
+        root_path = filepath
+        if root_path == '':
+            current_path = os.path.abspath(os.path.dirname(__file__))
+            root_path = current_path[
+                        :current_path.find('{}\\'.format(settings.app_name)) + len('{}\\'.format(settings.app_name))]
+        files = os.listdir(root_path)
+        file = []
+        for f in files:
+            if code.NOT_ALLOWED_ACCESS_FILE.count(f) == 0:
+                file.append({
+                    'filename': f,
+                    'file_type': await get_file_type(root_path, f),
+                    'path': await get_file_path(root_path, f),
+                    'size': os.path.getsize(await get_file_path(root_path, f)),
+                    'name': md5((await get_file_path(root_path, f)).encode('utf-8')).hexdigest(),
+                    'auth': int(oct(os.stat(await get_file_path(root_path, f)).st_mode)[-3:]),
+                    'ctime': int(os.path.getctime(await get_file_path(root_path, f))),
+                    'atime': int(os.path.getatime(await get_file_path(root_path, f))),
+                    'children': []
+                })
+        for k in file:
+            if k['file_type'] == 'dir':
+                k['children'] = await get_file_list(k['path'])
+        return file
+    except FileNotFoundError as e:
+        return [{'code': code.NETWORK, 'message': e}]
+
+
+async def get_file_content(filepath):
+    """
+    todo:读取文件内容
+    :param filepath:
+    :return:
+    """
+    try:
+        with open(filepath, 'rb', encoding='utf-8') as f:
+            return f.read()
+    except FileNotFoundError as e:
+        return [{'code': code.NETWORK, 'message': e}]
+
+
+async def write_file_content(filepath, content):
+    """
+    todo:文件内容写入
+    :param content:
+    :param filepath:
+    :return:
+    """
+    try:
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(content)
+    except FileNotFoundError as e:
+        return [{'code': code.NETWORK, 'message': e}]
+
+
+async def get_file_path(root_path, file):
+    """
+    todo:获取文件路径
+    :param root_path
+    :param file:
+    :return:
+    """
+    try:
+        if not os.path.isdir('{}{}'.format(root_path, file)):
+            return '{}{}'.format(root_path, file)
+        return '{}{}\\'.format(root_path, file)
+    except FileNotFoundError:
+        return None
+
+
+async def get_file_type(root_path, file):
+    """
+    todo:获取文件类型
+    :param root_path:
+    :param file:
+    :return:
+    """
+    try:
+        if os.path.isfile('{}{}'.format(root_path, file)):
+            f = filetype.guess('{}{}'.format(root_path, file))
+            if f is not None:
+                return f.extension
+            else:
+                return 'file'
+        return 'dir'
+    except FileNotFoundError:
+        return None
 
 
 async def get_random_name():
