@@ -4,7 +4,7 @@ import urllib.parse
 import requests
 from requests import JSONDecodeError
 
-from vendor import get_state, helper
+from vendor.oauth import get_state, helper
 
 """
 QQ API 授权登录

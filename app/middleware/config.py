@@ -41,7 +41,7 @@ class MiddlewareMessage(BaseSettings):
     # 用户不存在
     USER_NOT_FOUND_MESSAGE = 'User Not Found'
     # 不登录可以访问地址
-    NOT_LOGIN_ACCESS_URL = ['/api/v1/account/login', '/api/v1/common/captcha', '/api/v1/account/register', '/api/v1/file/write']
+    NOT_LOGIN_ACCESS_URL = ['/api/v1/account/login', '/api/v1/common/captcha', '/api/v1/account/register', '/api/v1/common/token']
     # 不展示的文件或文件夹
     NOT_ALLOWED_ACCESS_FILE = ['.git', '.idea', '.env', '__pycache__', '.gitignore']
 

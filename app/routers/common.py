@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Request
 
 from app.services import common
+from db import schemas
 
 router = APIRouter()
 
@@ -15,3 +16,14 @@ async def captcha(request: Request):
     :return JSONResponse:
     """
     return await common.captcha(request)
+
+
+@router.post('/common/token')
+async def set_token(params: schemas.logoutModel, request: Request):
+    """
+    todo: 保存TOKEN
+    :param params:
+    :param request:
+    :return JSONResponse:
+    """
+    return await common.set_token(params, request)

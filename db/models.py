@@ -104,7 +104,7 @@ class ImageType(Base):
     __tablename__ = 'os_soogif_type'
     id = Column(Integer, primary_key=True)
     href = Column(String(length=256), index=True, default='0')
-    name = Column(String(length=256), index=True, default='0')
+    name = Column(String(length=256), default='0')
 
 
 # 系统配置

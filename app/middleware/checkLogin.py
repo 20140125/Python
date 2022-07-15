@@ -10,14 +10,13 @@ from db.crud import users, role as roles
 from tools import helper
 from tools.redis import redisClient
 
-"""
-todo：设置主体内容
-app.middleware.checkLogin async
-def set_body(request: {receive, _receive}) -> Coroutine[Any, Any, None]
-"""
-
 
 async def set_body(request):
+    """
+    todo：设置主体内容
+    :param request:
+    :return:
+    """
     receive_ = await request.receive()
 
     async def receive():
