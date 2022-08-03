@@ -22,14 +22,16 @@ class Settings(BaseSettings):
     default_password: str = ''
 
     # 数据库配置
-    db_host: str = ''
-    db_username: str = ''
-    db_password: str = ''
-    db_database: str = ''
+    db_connection: str = 'mysql'
+    db_host: str = '127.0.0.1'
+    db_port: int = 3306
+    db_database: str = 'longer'
+    db_username: str = 'root'
+    db_password: str = '123456789'
     db_debug: bool = True
 
     # redis 配置
-    redis_host: str = ''
+    redis_host: str = '127.0.0.1'
     redis_port: int = 3306
     redis_password: str = ''
 

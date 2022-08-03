@@ -73,6 +73,7 @@ def save(auth):
         db.refresh(auth)
         return auth.id
     except Exception as e:
+        db.rollback()
         logger.error('save_auth message：{}'.format(e))
         return None
 
@@ -104,5 +105,6 @@ def update(params):
         db.commit()
         return True
     except Exception as e:
+        db.rollback()
         logger.error('update_auth message：{}'.format(e))
         return None

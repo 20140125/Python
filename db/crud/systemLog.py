@@ -40,6 +40,7 @@ def save(log):
         db.commit()
         return log
     except Exception as e:
+        db.rollback()
         logger.error('insert_log message：{}'.format(e))
         return None
 
@@ -57,5 +58,6 @@ def delete(filters=None):
         db.commit()
         return True
     except Exception as e:
+        db.rollback()
         logger.error('delete_log message：{}'.format(e))
         return None

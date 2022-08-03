@@ -32,6 +32,7 @@ def save(userCenter):
         db.refresh(userCenter)
         return userCenter.id
     except Exception as e:
+        db.rollback()
         logger.error('save_user_center message：{}'.format(e))
         return None
 
@@ -64,5 +65,6 @@ def update(userCenter, filters):
         db.commit()
         return True
     except Exception as e:
+        db.rollback()
         logger.error('update_user_center message：{}'.format(e))
         return None

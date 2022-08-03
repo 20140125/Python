@@ -5,7 +5,6 @@ import time
 
 from db import models
 from db.crud import systemLog
-from db.models import Log
 from tools import helper
 from tools.logger import logger
 from tools.redis import redisClient
@@ -37,7 +36,7 @@ async def remove(params, request):
     :return JSONResponse:
     """
     try:
-        if systemLog.delete([Log.id == params.id]):
+        if systemLog.delete([models.Log.id == params.id]):
             return await helper.jsonResponse(request, lists={'id': params.id})
         return await helper.jsonResponse(request, lists={'id': params.id}, status=helper.code.ERROR)
     except Exception as e:

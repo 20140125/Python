@@ -72,6 +72,7 @@ def save(user):
         db.refresh(user)
         return user.id
     except Exception as e:
+        db.rollback()
         logger.error('save_user message：{}'.format(e))
         return None
 
@@ -107,5 +108,6 @@ def update(user, filters):
         db.commit()
         return True
     except Exception as e:
+        db.rollback()
         logger.error('update_user message：{}'.format(e))
         return None
